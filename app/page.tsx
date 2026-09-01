@@ -3425,9 +3425,9 @@ export default function Home() {
   const [noteModal, setNoteModal] = useState(false);
   const [editingProject, setEditingProject] = useState<WorkspaceProjectRecord | null>(null);
   const [profile, setProfile] = useState<UserProfile>({
-    displayName: "访客",
+    displayName: "用户名",
     motto: "专注 · 自洽 · 成长",
-    avatarText: "林",
+    avatarText: "用",
     accent: "gold",
   });
   const [profileModal, setProfileModal] = useState(false);
@@ -4378,9 +4378,9 @@ export default function Home() {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const displayName =
-      String(form.get("displayName") || "访客")
+      String(form.get("displayName") || "用户名")
         .trim()
-        .slice(0, 24) || "访客";
+        .slice(0, 24) || "用户名";
     const next: UserProfile = {
       displayName,
       motto: String(form.get("motto") || "")

@@ -89,9 +89,9 @@ CREATE TABLE IF NOT EXISTS `knowledge` (
 CREATE INDEX IF NOT EXISTS `knowledge_owner_idx` ON `knowledge` (`owner_id`);--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS `profiles` (
 	`owner_id` text PRIMARY KEY NOT NULL,
-	`display_name` text DEFAULT '访客' NOT NULL,
+	`display_name` text DEFAULT '用户名' NOT NULL,
 	`motto` text DEFAULT '专注 · 自洽 · 成长' NOT NULL,
-	`avatar_text` text DEFAULT '林' NOT NULL,
+	`avatar_text` text DEFAULT '用' NOT NULL,
 	`accent` text DEFAULT 'gold' NOT NULL,
 	`updated_at` text DEFAULT '' NOT NULL
 );

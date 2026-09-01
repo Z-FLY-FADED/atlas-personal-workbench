@@ -156,7 +156,7 @@ export async function GET(request: Request) {
       tasks: taskResult.results.map((task) => ({ ...task, done: Boolean(task.done), completionHistory: parseCompletionHistory((task as Record<string, unknown>).completionHistory) })),
       knowledge: enrichedKnowledge,
       applications: applicationResult.results,
-      profile: profileResult.results[0] || { displayName: "访客", motto: "专注 · 自洽 · 成长", avatarText: "访", accent: "gold", updatedAt: "" },
+      profile: profileResult.results[0] || { displayName: "用户名", motto: "专注 · 自洽 · 成长", avatarText: "用", accent: "gold", updatedAt: "" },
       resume: resumeResult.results[0] || null,
       projects: projectResult.results,
       quickNotes: noteResult.results,
@@ -289,7 +289,7 @@ export async function PATCH(request: Request) {
   try {
     const payload = await request.json() as { type?: string; action?: string; id?: number; done?: boolean; title?: string; detail?: string; priority?: string; horizon?: string; date?: string; completedAt?: string; completedOn?: string; company?: string; role?: string; status?: string; channel?: string; appliedAt?: string; nextAction?: string; notes?: string; displayName?: string; motto?: string; avatarText?: string; accent?: string; updatedAt?: string; content?: string; stage?: string; progress?: number; nextMilestone?: string; dueDate?: string; remainingTasks?: number; remindAt?: string; projectId?: number | null };
     if (payload.type === "profile") {
-      const displayName = String(payload.displayName ?? "访客").trim().slice(0, 24) || "访客";
+      const displayName = String(payload.displayName ?? "用户名").trim().slice(0, 24) || "用户名";
       const motto = String(payload.motto ?? "专注 · 自洽 · 成长").trim().slice(0, 60);
       const firstCharacter = displayName.match(/[\p{Script=Han}\p{L}\p{N}]/u)?.[0] || "个";
       const avatarText = /[a-z]/i.test(firstCharacter) ? firstCharacter.toUpperCase() : firstCharacter;

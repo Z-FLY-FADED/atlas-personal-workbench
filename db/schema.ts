@@ -85,9 +85,9 @@ export const applications = sqliteTable("applications", {
 
 export const profiles = sqliteTable("profiles", {
   ownerId: text("owner_id").primaryKey(),
-  displayName: text("display_name").notNull().default("访客"),
+  displayName: text("display_name").notNull().default("用户名"),
   motto: text("motto").notNull().default("专注 · 自洽 · 成长"),
-  avatarText: text("avatar_text").notNull().default("林"),
+  avatarText: text("avatar_text").notNull().default("用"),
   accent: text("accent").notNull().default("gold"),
   updatedAt: text("updated_at").notNull().default(""),
 });

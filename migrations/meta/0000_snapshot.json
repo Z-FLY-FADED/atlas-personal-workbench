@@ -627,7 +627,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "'访客'"
+          "default": "'用户名'"
         },
         "motto": {
           "name": "motto",
@@ -643,7 +643,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "'林'"
+          "default": "'用'"
         },
         "accent": {
           "name": "accent",
