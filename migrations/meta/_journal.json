@@ -1,0 +1,34 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1786680448891,
+      "tag": "0000_funny_northstar",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1787645876267,
+      "tag": "0001_graceful_orphan",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1787716206363,
+      "tag": "0002_faulty_scream",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1787802074786,
+      "tag": "0003_curved_joystick",
+      "breakpoints": true
+    }
+  ]
+}
