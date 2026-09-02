@@ -13950,7 +13950,7 @@ header {
 
 /* Calendar Gantt below the project board */
 .workspace-gantt { margin-top: 22px; overflow: hidden; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); box-shadow: 0 12px 36px rgba(35,31,22,.04); }
-.workspace-gantt > header { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; padding: 20px 22px; border-bottom: 1px solid var(--border); }
+.workspace-gantt > header { display: flex; height: auto; align-items: flex-end; justify-content: space-between; gap: 20px; padding: 20px 22px; border-bottom: 1px solid var(--border); }
 .workspace-gantt > header > div:first-child > p { color: var(--gold-light); font-size: 10px; font-weight: 800; letter-spacing: .16em; }
 .workspace-gantt > header h2 { margin: 5px 0; font-family: Georgia, "Noto Serif SC", serif; font-size: 23px; }
 .workspace-gantt > header > div:first-child > span { color: var(--muted); font-size: 11px; }

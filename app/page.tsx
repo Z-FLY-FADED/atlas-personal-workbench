@@ -5594,7 +5594,6 @@ export default function Home() {
                   <strong>{completed}</strong>
                 </article>
               </div>
-              {taskHistoryOpen && <TaskHistory />}
               <section className="panel tasks-panel">
                 <div className="active-task-label">
                   <span>ACTIVE TASKS</span>
@@ -5603,6 +5602,7 @@ export default function Home() {
                 <HorizonTabs />
                 <TaskRows />
               </section>
+              {taskHistoryOpen && <TaskHistory />}
             </section>
           )}
 
