@@ -86,16 +86,6 @@ export async function GET(request: Request) {
   const userId = getOwnerId(request);
   if (!userId) return unauthorizedResponse();
   try {
-    // Remove only the two exact first-release demo records. User-created tasks
-    // are never matched by this migration, so a new workspace really opens at 0/0.
-    await env.DB.prepare(`DELETE FROM tasks WHERE owner_id = ? AND (
-      (title = ? AND detail = ? AND horizon = ? AND date = ?) OR
-      (title = ? AND detail = ? AND horizon = ? AND date = ?)
-    )`).bind(
-      userId,
-      "完成产品需求梳理", "个人工作台 v1.0", "今日", "今天 10:00",
-      "整理 Codex 对话记录", "归档至知识库 · AI 工具", "今日", "今天 14:30",
-    ).run();
     const [taskResult, knowledgeResult, applicationResult, profileResult, resumeResult, projectResult, noteResult, reminderResult] = await env.DB.batch([
       env.DB.prepare("SELECT id, title, detail, priority, horizon, done, date, completed_at AS completedAt, completed_on AS completedOn, completion_history AS completionHistory, active_on AS activeOn, project_id AS projectId FROM tasks WHERE owner_id = ? ORDER BY id DESC").bind(userId),
       env.DB.prepare("SELECT id, title, summary, content, primary_category AS primaryCategory, secondary_category AS secondaryCategory, confidence, source, source_type AS sourceType, created_at AS createdAt, completeness, enrichment, keywords, related_ids AS relatedIds, related_topics AS relatedTopics FROM knowledge WHERE owner_id = ? ORDER BY id DESC").bind(userId),
