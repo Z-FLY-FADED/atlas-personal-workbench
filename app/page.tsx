@@ -560,6 +560,30 @@ type JobApplication = {
   nextAction: string;
   notes: string;
 };
+type ApplicationFormDraft = Omit<JobApplication, "id">;
+
+function applicationDateInputValue(value?: string) {
+  const date = value?.trim() || "";
+  if (/^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
+  if (date === "今天") return shanghaiDateKey();
+  const chineseDate = date.match(/(?:(\d{4})年)?(\d{1,2})月(\d{1,2})日?/);
+  if (!chineseDate) return "";
+  const year = chineseDate[1] || shanghaiDateKey().slice(0, 4);
+  return `${year}-${chineseDate[2].padStart(2, "0")}-${chineseDate[3].padStart(2, "0")}`;
+}
+
+function applicationFormDraft(application: JobApplication | null): ApplicationFormDraft {
+  return {
+    company: application?.company || "",
+    role: application?.role || "",
+    status: application?.status || "已投递",
+    channel: application?.channel || "",
+    appliedAt:
+      applicationDateInputValue(application?.appliedAt) || shanghaiDateKey(),
+    nextAction: application?.nextAction || "",
+    notes: application?.notes || "",
+  };
+}
 type StockCandidate = {
   instrumentId: string;
   market: "A股" | "港股" | "纳斯达克";
@@ -3436,6 +3460,9 @@ export default function Home() {
   const [applicationModal, setApplicationModal] = useState(false);
   const [editingApplication, setEditingApplication] =
     useState<JobApplication | null>(null);
+  const [applicationDraft, setApplicationDraft] =
+    useState<ApplicationFormDraft>(() => applicationFormDraft(null));
+  const [applicationSaving, setApplicationSaving] = useState(false);
   const [applicationFilter, setApplicationFilter] = useState<
     "全部" | "进行中" | "已结束"
   >("全部");
@@ -3484,6 +3511,11 @@ export default function Home() {
     }, 60_000);
     return () => window.clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    if (!applicationModal) return;
+    setApplicationDraft(applicationFormDraft(editingApplication));
+  }, [applicationModal, editingApplication]);
 
   useEffect(() => {
     if (!themeReady) return;
@@ -4300,40 +4332,49 @@ export default function Home() {
 
   async function addApplication(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
+    const company = applicationDraft.company.trim();
+    const role = applicationDraft.role.trim();
+    if (!company || !role) {
+      setToast("请填写公司和职位");
+      return;
+    }
     const draft: JobApplication = {
       id: editingApplication?.id || Date.now(),
-      company: String(form.get("company")),
-      role: String(form.get("role")),
-      status: String(form.get("status")) as ApplicationStatus,
-      channel: String(form.get("channel") || "手动记录"),
-      appliedAt: String(form.get("appliedAt") || "今天"),
-      nextAction: String(form.get("nextAction") || "等待反馈"),
-      notes: String(form.get("notes") || ""),
+      company,
+      role,
+      status: applicationDraft.status,
+      channel: applicationDraft.channel.trim() || "手动记录",
+      appliedAt: applicationDraft.appliedAt || shanghaiDateKey(),
+      nextAction: applicationDraft.nextAction.trim() || "等待反馈",
+      notes: applicationDraft.notes.trim(),
     };
     const editing = Boolean(editingApplication);
-    setApplications((items) =>
-      editing
-        ? items.map((item) => (item.id === draft.id ? draft : item))
-        : [draft, ...items],
-    );
-    setApplicationModal(false);
-    setEditingApplication(null);
-    setToast(editing ? "投递记录已更新" : "投递记录已保存");
-    fetch("/api/workspace", {
-      method: editing ? "PATCH" : "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type: "application", ...draft }),
-    })
-      .then((res) => (res.ok ? res.json() : Promise.reject()))
-      .then(
-        ({ item }) =>
-          item &&
-          setApplications((items) =>
-            items.map((entry) => (entry.id === draft.id ? item : entry)),
-          ),
-      )
-      .catch(() => undefined);
+    setApplicationSaving(true);
+    try {
+      const response = await fetch("/api/workspace", {
+        method: editing ? "PATCH" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "application", ...draft }),
+      });
+      const data = (await response.json().catch(() => ({}))) as {
+        item?: JobApplication;
+        error?: string;
+      };
+      if (!response.ok) throw new Error(data.error || "保存失败");
+      const saved = data.item || draft;
+      setApplications((items) =>
+        editing
+          ? items.map((item) => (item.id === draft.id ? saved : item))
+          : [saved, ...items],
+      );
+      setApplicationModal(false);
+      setEditingApplication(null);
+      setToast(editing ? "投递记录已更新" : "投递记录已保存");
+    } catch (error) {
+      setToast(error instanceof Error ? error.message : "保存失败，请稍后重试");
+    } finally {
+      setApplicationSaving(false);
+    }
   }
 
   function saveProfile(event: FormEvent<HTMLFormElement>) {
@@ -7527,7 +7568,10 @@ export default function Home() {
                   name="company"
                   required
                   autoFocus
-                  defaultValue={editingApplication?.company || ""}
+                  value={applicationDraft.company}
+                  onChange={(event) =>
+                    setApplicationDraft((draft) => ({ ...draft, company: event.target.value }))
+                  }
                   placeholder="公司名称"
                 />
               </label>
@@ -7536,7 +7580,10 @@ export default function Home() {
                 <input
                   name="role"
                   required
-                  defaultValue={editingApplication?.role || ""}
+                  value={applicationDraft.role}
+                  onChange={(event) =>
+                    setApplicationDraft((draft) => ({ ...draft, role: event.target.value }))
+                  }
                   placeholder="目标岗位"
                 />
               </label>
@@ -7546,7 +7593,13 @@ export default function Home() {
                 当前状态
                 <select
                   name="status"
-                  defaultValue={editingApplication?.status || "已投递"}
+                  value={applicationDraft.status}
+                  onChange={(event) =>
+                    setApplicationDraft((draft) => ({
+                      ...draft,
+                      status: event.target.value as ApplicationStatus,
+                    }))
+                  }
                 >
                   <option>待投递</option>
                   <option>已投递</option>
@@ -7560,7 +7613,10 @@ export default function Home() {
                 投递渠道
                 <input
                   name="channel"
-                  defaultValue={editingApplication?.channel || ""}
+                  value={applicationDraft.channel}
+                  onChange={(event) =>
+                    setApplicationDraft((draft) => ({ ...draft, channel: event.target.value }))
+                  }
                   placeholder="官网 / 内推 / 招聘平台"
                 />
               </label>
@@ -7569,16 +7625,22 @@ export default function Home() {
               <label>
                 投递日期
                 <input
+                  type="date"
                   name="appliedAt"
-                  defaultValue={editingApplication?.appliedAt || ""}
-                  placeholder="例如：今天"
+                  value={applicationDraft.appliedAt}
+                  onChange={(event) =>
+                    setApplicationDraft((draft) => ({ ...draft, appliedAt: event.target.value }))
+                  }
                 />
               </label>
               <label>
                 下一步
                 <input
                   name="nextAction"
-                  defaultValue={editingApplication?.nextAction || ""}
+                  value={applicationDraft.nextAction}
+                  onChange={(event) =>
+                    setApplicationDraft((draft) => ({ ...draft, nextAction: event.target.value }))
+                  }
                   placeholder="例如：周五前跟进"
                 />
               </label>
@@ -7588,7 +7650,10 @@ export default function Home() {
               <textarea
                 name="notes"
                 rows={4}
-                defaultValue={editingApplication?.notes || ""}
+                value={applicationDraft.notes}
+                onChange={(event) =>
+                  setApplicationDraft((draft) => ({ ...draft, notes: event.target.value }))
+                }
                 placeholder="简历版本、岗位要点、联系人或面试准备…"
               />
             </label>
@@ -7602,8 +7667,12 @@ export default function Home() {
                   删除记录
                 </button>
               )}
-              <button className="submit" type="submit">
-                {editingApplication ? "保存记录修改" : "保存投递记录"}{" "}
+              <button className="submit" type="submit" disabled={applicationSaving}>
+                {applicationSaving
+                  ? "正在保存…"
+                  : editingApplication
+                    ? "保存记录修改"
+                    : "保存投递记录"}{" "}
                 <span>→</span>
               </button>
             </div>
