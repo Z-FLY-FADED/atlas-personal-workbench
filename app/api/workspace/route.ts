@@ -1,20 +1,10 @@
 import { env } from "cloudflare:workers";
 import { enrichKnowledge, parseKnowledgeEnrichment } from "../../knowledge-enrichment";
 import { analyzeKnowledgeContent, rankKnowledgeRelations } from "../../knowledge-intelligence";
+import { shanghaiDateKey } from "../../components/workspace/taskDates";
 import { getOwnerId, unauthorizedResponse } from "../auth";
 
 export const dynamic = "force-dynamic";
-
-function shanghaiDateKey(date = new Date()) {
-  const parts = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Shanghai",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(date);
-  const values = Object.fromEntries(parts.filter((part) => part.type !== "literal").map((part) => [part.type, part.value]));
-  return `${values.year}-${values.month}-${values.day}`;
-}
 
 function shanghaiTimestamp(date = new Date()) {
   return new Intl.DateTimeFormat("zh-CN", {
@@ -96,7 +86,6 @@ export async function GET(request: Request) {
   const userId = getOwnerId(request);
   if (!userId) return unauthorizedResponse();
   try {
-    const todayKey = shanghaiDateKey();
     // Remove only the two exact first-release demo records. User-created tasks
     // are never matched by this migration, so a new workspace really opens at 0/0.
     await env.DB.prepare(`DELETE FROM tasks WHERE owner_id = ? AND (
@@ -107,11 +96,8 @@ export async function GET(request: Request) {
       "完成产品需求梳理", "个人工作台 v1.0", "今日", "今天 10:00",
       "整理 Codex 对话记录", "归档至知识库 · AI 工具", "今日", "今天 14:30",
     ).run();
-    // 今日任务按自然日重复执行；跨日只清除当前完成状态，完成历史仍保留。
-    await env.DB.prepare("UPDATE tasks SET done = 0, completed_at = '', completed_on = '' WHERE owner_id = ? AND horizon = ? AND done = 1 AND (completed_on = '' OR completed_on IS NULL OR completed_on <> ?)")
-      .bind(userId, "今日", todayKey).run();
     const [taskResult, knowledgeResult, applicationResult, profileResult, resumeResult, projectResult, noteResult, reminderResult] = await env.DB.batch([
-      env.DB.prepare("SELECT id, title, detail, priority, horizon, done, date, completed_at AS completedAt, completed_on AS completedOn, completion_history AS completionHistory, project_id AS projectId FROM tasks WHERE owner_id = ? ORDER BY id DESC").bind(userId),
+      env.DB.prepare("SELECT id, title, detail, priority, horizon, done, date, completed_at AS completedAt, completed_on AS completedOn, completion_history AS completionHistory, active_on AS activeOn, project_id AS projectId FROM tasks WHERE owner_id = ? ORDER BY id DESC").bind(userId),
       env.DB.prepare("SELECT id, title, summary, content, primary_category AS primaryCategory, secondary_category AS secondaryCategory, confidence, source, source_type AS sourceType, created_at AS createdAt, completeness, enrichment, keywords, related_ids AS relatedIds, related_topics AS relatedTopics FROM knowledge WHERE owner_id = ? ORDER BY id DESC").bind(userId),
       env.DB.prepare("SELECT id, company, role, status, channel, applied_at AS appliedAt, next_action AS nextAction, notes FROM applications WHERE owner_id = ? ORDER BY id DESC").bind(userId),
       env.DB.prepare("SELECT display_name AS displayName, motto, avatar_text AS avatarText, accent, updated_at AS updatedAt FROM profiles WHERE owner_id = ? LIMIT 1").bind(userId),
@@ -179,10 +165,12 @@ export async function POST(request: Request) {
       const completedOn = completed ? String(payload.completedOn ?? shanghaiDateKey()) : "";
       const completionHistory = completed ? JSON.stringify([{ id: `${Date.now()}`, completedAt, completedOn }]) : "[]";
       const projectId = Number(payload.projectId) > 0 ? Number(payload.projectId) : null;
-      const result = await env.DB.prepare("INSERT INTO tasks (owner_id, title, detail, priority, horizon, done, date, completed_at, completed_on, completion_history, project_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
-        .bind(userId, String(payload.title ?? "未命名任务"), String(payload.detail ?? ""), String(payload.priority ?? "一般"), String(payload.horizon ?? "今日"), completed ? 1 : 0, String(payload.date ?? "待安排"), completedAt, completedOn, completionHistory, projectId)
+      const horizon = String(payload.horizon ?? "今日");
+      const activeOn = horizon === "今日" ? shanghaiDateKey() : "";
+      const result = await env.DB.prepare("INSERT INTO tasks (owner_id, title, detail, priority, horizon, done, date, completed_at, completed_on, completion_history, active_on, project_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+        .bind(userId, String(payload.title ?? "未命名任务"), String(payload.detail ?? ""), String(payload.priority ?? "一般"), horizon, completed ? 1 : 0, String(payload.date ?? "待安排"), completedAt, completedOn, completionHistory, activeOn, projectId)
         .run();
-      return Response.json({ item: { ...payload, id: result.meta.last_row_id, projectId, done: completed, completedAt, completedOn, completionHistory: parseCompletionHistory(completionHistory) } }, { status: 201 });
+      return Response.json({ item: { ...payload, id: result.meta.last_row_id, horizon, activeOn, projectId, done: completed, completedAt, completedOn, completionHistory: parseCompletionHistory(completionHistory) } }, { status: 201 });
     }
     if (payload.type === "project") {
       const title = String(payload.title ?? "未命名项目").trim().slice(0, 80) || "未命名项目";
@@ -287,7 +275,7 @@ export async function PATCH(request: Request) {
   const userId = getOwnerId(request);
   if (!userId) return unauthorizedResponse();
   try {
-    const payload = await request.json() as { type?: string; action?: string; id?: number; done?: boolean; title?: string; detail?: string; priority?: string; horizon?: string; date?: string; completedAt?: string; completedOn?: string; company?: string; role?: string; status?: string; channel?: string; appliedAt?: string; nextAction?: string; notes?: string; displayName?: string; motto?: string; avatarText?: string; accent?: string; updatedAt?: string; content?: string; stage?: string; progress?: number; nextMilestone?: string; dueDate?: string; remainingTasks?: number; remindAt?: string; projectId?: number | null };
+    const payload = await request.json() as { type?: string; action?: string; id?: number; done?: boolean; title?: string; detail?: string; priority?: string; horizon?: string; date?: string; activeOn?: string; completedAt?: string; completedOn?: string; company?: string; role?: string; status?: string; channel?: string; appliedAt?: string; nextAction?: string; notes?: string; displayName?: string; motto?: string; avatarText?: string; accent?: string; updatedAt?: string; content?: string; stage?: string; progress?: number; nextMilestone?: string; dueDate?: string; remainingTasks?: number; remindAt?: string; projectId?: number | null };
     if (payload.type === "profile") {
       const displayName = String(payload.displayName ?? "用户名").trim().slice(0, 24) || "用户名";
       const motto = String(payload.motto ?? "专注 · 自洽 · 成长").trim().slice(0, 60);
@@ -345,35 +333,35 @@ export async function PATCH(request: Request) {
       return Response.json({ item: payload, updated: true });
     }
     if (payload.type !== "task" || !payload.id) return Response.json({ error: "invalid task" }, { status: 400 });
-    if (payload.action === "reset-daily") {
-      await env.DB.prepare("UPDATE tasks SET done = 0, completed_at = '', completed_on = '' WHERE id = ? AND owner_id = ? AND horizon = ?")
-        .bind(payload.id, userId, "今日").run();
-      return Response.json({ item: { id: payload.id, done: false, completedAt: "", completedOn: "" }, updated: true });
-    }
     if (payload.action === "edit") {
       const projectId = Number(payload.projectId) > 0 ? Number(payload.projectId) : null;
-      const updated = await env.DB.prepare("UPDATE tasks SET title = ?, detail = ?, priority = ?, horizon = ?, date = ?, project_id = ? WHERE id = ? AND owner_id = ?")
-        .bind(String(payload.title ?? "未命名任务"), String(payload.detail ?? ""), String(payload.priority ?? "一般"), String(payload.horizon ?? "今日"), String(payload.date ?? "待安排"), projectId, payload.id, userId).run();
+      const horizon = String(payload.horizon ?? "今日");
+      const activeOn = horizon === "今日" ? String(payload.activeOn || shanghaiDateKey()) : "";
+      const updated = await env.DB.prepare("UPDATE tasks SET title = ?, detail = ?, priority = ?, horizon = ?, date = ?, active_on = ?, project_id = ? WHERE id = ? AND owner_id = ?")
+        .bind(String(payload.title ?? "未命名任务"), String(payload.detail ?? ""), String(payload.priority ?? "一般"), horizon, String(payload.date ?? "待安排"), activeOn, projectId, payload.id, userId).run();
       if (!updated.meta.changes) {
-        const inserted = await env.DB.prepare("INSERT INTO tasks (owner_id, title, detail, priority, horizon, done, date, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
-          .bind(userId, String(payload.title ?? "未命名任务"), String(payload.detail ?? ""), String(payload.priority ?? "一般"), String(payload.horizon ?? "今日"), payload.done ? 1 : 0, String(payload.date ?? "待安排"), String(payload.completedAt ?? "")).run();
-        return Response.json({ item: { id: inserted.meta.last_row_id, title: payload.title, detail: payload.detail, priority: payload.priority, horizon: payload.horizon, date: payload.date, completedAt: payload.completedAt, done: Boolean(payload.done) } });
+        const inserted = await env.DB.prepare("INSERT INTO tasks (owner_id, title, detail, priority, horizon, done, date, completed_at, active_on) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
+          .bind(userId, String(payload.title ?? "未命名任务"), String(payload.detail ?? ""), String(payload.priority ?? "一般"), horizon, payload.done ? 1 : 0, String(payload.date ?? "待安排"), String(payload.completedAt ?? ""), activeOn).run();
+        return Response.json({ item: { id: inserted.meta.last_row_id, title: payload.title, detail: payload.detail, priority: payload.priority, horizon, date: payload.date, activeOn, completedAt: payload.completedAt, done: Boolean(payload.done) } });
       }
-      return Response.json({ item: { id: payload.id, title: payload.title, detail: payload.detail, priority: payload.priority, horizon: payload.horizon, date: payload.date, projectId, completedAt: payload.completedAt, done: Boolean(payload.done) } });
+      return Response.json({ item: { id: payload.id, title: payload.title, detail: payload.detail, priority: payload.priority, horizon, date: payload.date, activeOn, projectId, completedAt: payload.completedAt, done: Boolean(payload.done) } });
     }
-    const current = await env.DB.prepare("SELECT completion_history AS completionHistory FROM tasks WHERE id = ? AND owner_id = ? LIMIT 1").bind(payload.id, userId).first();
+    const current = await env.DB.prepare("SELECT completion_history AS completionHistory, active_on AS activeOn FROM tasks WHERE id = ? AND owner_id = ? LIMIT 1").bind(payload.id, userId).first();
     const history = parseCompletionHistory((current as Record<string, unknown> | null)?.completionHistory);
+    const activeOn = String((current as Record<string, unknown> | null)?.activeOn || payload.activeOn || "");
     const done = Boolean(payload.done);
     const completedAt = done ? String(payload.completedAt ?? new Intl.DateTimeFormat("zh-CN", { timeZone: "Asia/Shanghai", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date())) : "";
     const completedOn = done ? String(payload.completedOn ?? shanghaiDateKey()) : "";
     const nextHistory = done ? [...history, { id: `${Date.now()}-${payload.id}`, completedAt, completedOn }] : history.slice(0, -1);
     const toggled = await env.DB.prepare("UPDATE tasks SET done = ?, completed_at = ?, completed_on = ?, completion_history = ? WHERE id = ? AND owner_id = ?").bind(done ? 1 : 0, completedAt, completedOn, JSON.stringify(nextHistory), payload.id, userId).run();
     if (!toggled.meta.changes) {
-      const inserted = await env.DB.prepare("INSERT INTO tasks (owner_id, title, detail, priority, horizon, done, date, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
-        .bind(userId, String(payload.title ?? "未命名任务"), String(payload.detail ?? ""), String(payload.priority ?? "一般"), String(payload.horizon ?? "今日"), payload.done ? 1 : 0, String(payload.date ?? "待安排"), String(payload.completedAt ?? "")).run();
-      return Response.json({ item: { id: inserted.meta.last_row_id, title: payload.title, detail: payload.detail, priority: payload.priority, horizon: payload.horizon, date: payload.date, completedAt: payload.completedAt, done: Boolean(payload.done) } });
+      const horizon = String(payload.horizon ?? "今日");
+      const activeOn = horizon === "今日" ? String(payload.activeOn || shanghaiDateKey()) : "";
+      const inserted = await env.DB.prepare("INSERT INTO tasks (owner_id, title, detail, priority, horizon, done, date, completed_at, active_on) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
+        .bind(userId, String(payload.title ?? "未命名任务"), String(payload.detail ?? ""), String(payload.priority ?? "一般"), horizon, payload.done ? 1 : 0, String(payload.date ?? "待安排"), String(payload.completedAt ?? ""), activeOn).run();
+      return Response.json({ item: { id: inserted.meta.last_row_id, title: payload.title, detail: payload.detail, priority: payload.priority, horizon, date: payload.date, activeOn, completedAt: payload.completedAt, done: Boolean(payload.done) } });
     }
-    return Response.json({ item: { id: payload.id, title: payload.title, detail: payload.detail, priority: payload.priority, horizon: payload.horizon, date: payload.date, completedAt, completedOn, completionHistory: nextHistory, done } });
+    return Response.json({ item: { id: payload.id, title: payload.title, detail: payload.detail, priority: payload.priority, horizon: payload.horizon, date: payload.date, activeOn, projectId: payload.projectId, completedAt, completedOn, completionHistory: nextHistory, done } });
   } catch (error) {
     return Response.json({ error: error instanceof Error ? error.message : "更新失败" }, { status: 500 });
   }

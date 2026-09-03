@@ -28,6 +28,7 @@ import {
 } from "./components/workspace/WorkspacePages";
 import { WorkspaceSidebar } from "./components/workspace/WorkspaceSidebar";
 import { WorkspaceTopbar } from "./components/workspace/WorkspaceTopbar";
+import { visibleTasksForDay } from "./components/workspace/taskDates";
 import { CareerWorkspace } from "./components/career/CareerWorkspace";
 import { IndustryWorkspace } from "./components/industry/IndustryWorkspace";
 import { StockWorkspace } from "./components/stocks/StockWorkspace";
@@ -497,6 +498,7 @@ type Task = {
   completedAt?: string;
   completedOn?: string;
   completionHistory?: TaskCompletion[];
+  activeOn?: string;
   projectId?: number | null;
 };
 
@@ -526,14 +528,6 @@ function shanghaiDisplayTime(date = new Date()) {
     minute: "2-digit",
     hour12: false,
   }).format(date);
-}
-
-function normalizeDailyTasks(items: Task[], today = shanghaiDateKey()) {
-  return items.map((task) =>
-    task.horizon === "今日" && task.done && task.completedOn !== today
-      ? { ...task, done: false, completedAt: "", completedOn: "" }
-      : task,
-  );
 }
 
 type Knowledge = {
@@ -3394,6 +3388,7 @@ export default function Home() {
   const [themeMenu, setThemeMenu] = useState(false);
   const [horizon, setHorizon] = useState<Horizon>("今日");
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [currentTaskDay, setCurrentTaskDay] = useState(shanghaiDateKey);
   const [knowledge, setKnowledge] = useState<Knowledge[]>(initialKnowledge);
   const [query, setQuery] = useState("");
   const [taskModal, setTaskModal] = useState(false);
@@ -3482,48 +3477,10 @@ export default function Home() {
   const [aiRunning, setAiRunning] = useState(false);
   const [aiResult, setAiResult] = useState("");
   const taskSyncQueue = useRef(new Map<number, Promise<void>>());
-  const dailyResetDay = useRef(shanghaiDateKey());
-
   useEffect(() => {
-    const today = shanghaiDateKey();
-    const lastOpenDay = localStorage.getItem("atlas-task-reset-day");
-    localStorage.setItem("atlas-task-reset-day", today);
-    dailyResetDay.current = today;
-    if (lastOpenDay && lastOpenDay !== today) {
-      setTasks((items) =>
-        items.map((task) =>
-          task.horizon === "今日" && task.done
-            ? { ...task, done: false, completedAt: "", completedOn: "" }
-            : task,
-        ),
-      );
-    }
     const timer = window.setInterval(() => {
       const currentDay = shanghaiDateKey();
-      if (currentDay === dailyResetDay.current) return;
-      dailyResetDay.current = currentDay;
-      localStorage.setItem("atlas-task-reset-day", currentDay);
-      setTasks((items) => {
-        const dailyDone = items.filter(
-          (task) => task.horizon === "今日" && task.done,
-        );
-        dailyDone.forEach((task) => {
-          fetch("/api/workspace", {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              type: "task",
-              action: "reset-daily",
-              id: task.id,
-            }),
-          }).catch(() => undefined);
-        });
-        return items.map((task) =>
-          task.horizon === "今日" && task.done
-            ? { ...task, done: false, completedAt: "", completedOn: "" }
-            : task,
-        );
-      });
+      setCurrentTaskDay((activeDay) => activeDay === currentDay ? activeDay : currentDay);
     }, 60_000);
     return () => window.clearInterval(timer);
   }, []);
@@ -3552,7 +3509,7 @@ export default function Home() {
         // An empty API response is meaningful: it should clear the empty
         // initial state rather than leave any demo tasks on screen.
         if (Array.isArray(data.tasks))
-          setTasks(normalizeDailyTasks(data.tasks));
+          setTasks(data.tasks);
         if (Array.isArray(data.knowledge)) {
           const serverKnowledge = data.knowledge as Knowledge[];
           const savedTitles = new Set(
@@ -3641,9 +3598,13 @@ export default function Home() {
     return () => window.clearTimeout(timer);
   }, [toast, undoTask]);
 
+  const visibleTasks = useMemo(
+    () => visibleTasksForDay(tasks, currentTaskDay),
+    [tasks, currentTaskDay],
+  );
   const filteredTasks = useMemo(
-    () => tasks.filter((task) => task.horizon === horizon && !task.done),
-    [tasks, horizon],
+    () => visibleTasks.filter((task) => task.horizon === horizon && !task.done),
+    [visibleTasks, horizon],
   );
   const activeAIConnection = useMemo(
     () =>
@@ -3843,10 +3804,10 @@ export default function Home() {
       .slice(0, 14);
     return { topics, articles, relationEdges, topicEdges };
   }, [knowledge]);
-  const activeCompleted = tasks.filter((task) => task.done).length;
+  const activeCompleted = visibleTasks.filter((task) => task.done).length;
   const completed = completedHistory.length;
-  const todayTotal = tasks.filter((task) => task.horizon === "今日").length;
-  const todayDone = tasks.filter(
+  const todayTotal = visibleTasks.filter((task) => task.horizon === "今日").length;
+  const todayDone = visibleTasks.filter(
     (task) => task.horizon === "今日" && task.done,
   ).length;
   const selectedDigest = selectedKnowledge
@@ -4097,6 +4058,7 @@ export default function Home() {
       completedAt: editingTask?.completedAt || "",
       completedOn: editingTask?.completedOn || "",
       completionHistory: editingTask?.completionHistory || [],
+      activeOn: String(form.get("horizon")) === "今日" ? shanghaiDateKey() : "",
       projectId: Number(form.get("projectId")) || null,
     };
     if (editingTask)
@@ -4709,6 +4671,8 @@ export default function Home() {
       `确认删除「${application.company} · ${application.role}」的投递记录吗？\n删除后将无法恢复。`,
     );
     if (!confirmed) return;
+    setApplicationModal(false);
+    setEditingApplication(null);
     setApplications((items) =>
       items.filter((item) => item.id !== application.id),
     );
@@ -4873,7 +4837,7 @@ export default function Home() {
         >
           {item}任务{" "}
           <span>
-            {tasks.filter((task) => task.horizon === item && !task.done).length}
+            {visibleTasks.filter((task) => task.horizon === item && !task.done).length}
           </span>
         </button>
       ))}
@@ -5266,7 +5230,7 @@ export default function Home() {
       <WorkspaceSidebar
         active={view}
         mobileOpen={mobileMenu}
-        taskCount={tasks.filter((task) => !task.done).length}
+        taskCount={visibleTasks.filter((task) => !task.done).length}
         profile={{ ...profile, avatarText: getAvatarInitial(profile.displayName) }}
         onNavigate={(destination) => {
           if (destination === "今日") {
@@ -5308,7 +5272,7 @@ export default function Home() {
           {view === "工作台" && (
             <WorkspaceOverview
               displayName={profile.displayName}
-              tasks={tasks}
+              tasks={visibleTasks}
               knowledge={knowledge}
               projects={workspaceProjects}
               reminders={workspaceReminders}
@@ -5577,13 +5541,13 @@ export default function Home() {
               <div className="task-overview">
                 <article>
                   <small>当前任务</small>
-                  <strong>{tasks.length - activeCompleted}</strong>
+                  <strong>{visibleTasks.length - activeCompleted}</strong>
                 </article>
                 <article>
                   <small>今日待办</small>
                   <strong>
                     {
-                      tasks.filter(
+                      visibleTasks.filter(
                         (task) => task.horizon === "今日" && !task.done,
                       ).length
                     }
@@ -7628,10 +7592,21 @@ export default function Home() {
                 placeholder="简历版本、岗位要点、联系人或面试准备…"
               />
             </label>
-            <button className="submit" type="submit">
-              {editingApplication ? "保存记录修改" : "保存投递记录"}{" "}
-              <span>→</span>
-            </button>
+            <div className={`application-modal-actions${editingApplication ? " has-delete" : ""}`}>
+              {editingApplication && (
+                <button
+                  className="application-modal-delete"
+                  type="button"
+                  onClick={() => void deleteApplication(editingApplication)}
+                >
+                  删除记录
+                </button>
+              )}
+              <button className="submit" type="submit">
+                {editingApplication ? "保存记录修改" : "保存投递记录"}{" "}
+                <span>→</span>
+              </button>
+            </div>
           </form>
         </div>
       )}

@@ -12,6 +12,7 @@ export const tasks = sqliteTable("tasks", {
   completedAt: text("completed_at").notNull().default(""),
   completedOn: text("completed_on").notNull().default(""),
   completionHistory: text("completion_history").notNull().default("[]"),
+  activeOn: text("active_on").notNull().default(""),
   projectId: integer("project_id"),
 }, (table) => [index("tasks_owner_idx").on(table.ownerId)]);
 

@@ -2227,6 +2227,27 @@ header {
 .submit span {
   margin-left: auto;
 }
+.application-modal-actions.has-delete {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+}
+.application-modal-delete {
+  min-width: 104px;
+  margin-top: 18px;
+  padding: 12px 16px;
+  border: 1px solid color-mix(in srgb, #b45d5d 45%, var(--border));
+  border-radius: 8px;
+  color: #b45d5d;
+  background: color-mix(in srgb, #b45d5d 7%, var(--surface));
+  font-size: 12px;
+  font-weight: 700;
+}
+.application-modal-delete:hover {
+  border-color: #b45d5d;
+  color: #fff;
+  background: #b45d5d;
+}
 .ai-hint {
   display: flex;
   gap: 9px;
