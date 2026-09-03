@@ -14623,8 +14623,10 @@ header {
 .career-kanban-column article footer small, .career-kanban-column article footer b { display: block; }
 .career-kanban-column article footer small { margin-bottom: 4px; color: var(--muted); font-size: 10px; letter-spacing: .09em; }
 .career-kanban-column article footer b { font-size: 12px; line-height: 1.45; }
-.career-kanban-actions { display: grid !important; grid-template-columns: 1fr auto; gap: 5px; margin-top: 9px; }
+.career-kanban-actions { display: grid !important; grid-template-columns: 1fr auto auto; gap: 5px; margin-top: 9px; }
 .career-kanban-actions select, .career-kanban-actions button { height: 28px; padding: 0 7px; border: 1px solid var(--border); border-radius: 6px; color: var(--text); background: var(--surface-2); font-size: 11px; }
+.career-kanban-actions button.danger { border-color: rgba(180,93,93,.35); color: #b45d5d; background: rgba(180,93,93,.08); }
+.career-kanban-actions button.danger:hover { color: #fff; background: #b45d5d; }
 .career-kanban-empty { padding: 35px 0; color: var(--muted-2); font-size: 12px; text-align: center; }
 .career-application-table { overflow: hidden; border-radius: 12px; }
 .career-application-row { display: grid; grid-template-columns: minmax(180px, 1.2fr) 90px 140px 120px minmax(180px, 1.2fr) 100px; align-items: center; min-height: 58px; border-bottom: 1px solid var(--border); font-size: 13px; }
