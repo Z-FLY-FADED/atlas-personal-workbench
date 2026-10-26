@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { analyzeKnowledgeContent, rankKnowledgeRelations } from "../app/knowledge-intelligence";
-import { classifyKnowledge } from "../app/knowledge-taxonomy";
+import { analyzeKnowledgeContent, rankKnowledgeRelations } from "../app/features/knowledge/domain/intelligence";
+import { classifyKnowledge } from "../app/features/knowledge/domain/taxonomy";
 
 test("classifyKnowledge recognizes embedded systems content", () => {
   const result = classifyKnowledge("STM32 MCU 使用 FreeRTOS，通过 CAN 与 SPI 采集传感器数据");

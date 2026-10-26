@@ -12,6 +12,15 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    ".runtime/**",
+    ".wrangler/**",
+    ".vinext/**",
+    ".github-upload/**",
+    "dist/**",
+    "release/**",
+    "worker-configuration.d.ts",
+    "apps/atlas/**",
+    "supabase/functions/**",
   ]),
 ]);
 

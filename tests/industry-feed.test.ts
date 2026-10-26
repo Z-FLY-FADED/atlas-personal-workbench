@@ -5,7 +5,7 @@ import {
   isSafePublicUrl,
   parseFeed,
   simHashTitle,
-} from "../app/industry/feed";
+} from "../app/server/industry/feed";
 
 test("canonicalizeUrl removes tracking parameters and fragments", () => {
   assert.equal(

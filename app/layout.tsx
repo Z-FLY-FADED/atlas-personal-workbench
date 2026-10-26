@@ -1,9 +1,12 @@
-import type { Metadata, Viewport } from "next";
-import { headers } from "next/headers";
-import { Geist, Geist_Mono } from "next/font/google";
-import { PwaRegister } from "./pwa-register";
 import "katex/dist/katex.min.css";
+import type { Metadata,Viewport } from "next";
+import { Geist,Geist_Mono } from "next/font/google";
+import { headers } from "next/headers";
 import "./globals.css";
+import { PwaRegister } from "./pwa-register";
+import "./styles/phase2.css";
+import "./styles/round2.css";
+import "./styles/workspace-improvements.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });

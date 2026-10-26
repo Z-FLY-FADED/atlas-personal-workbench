@@ -1,5 +1,5 @@
 param(
-  [int]$Port = 3002,
+  [ValidateRange(1, 65535)][int]$Port = 3002,
   [switch]$NoBrowser
 )
 
@@ -16,6 +16,15 @@ function Test-WorkbenchPort {
   return [bool](Get-NetTCPConnection -LocalPort $TargetPort -State Listen -ErrorAction SilentlyContinue)
 }
 
+function Test-WorkbenchReady {
+  try {
+    $health = Invoke-RestMethod -Uri "http://localhost:$Port/api/health" -TimeoutSec 2
+    return ($health.service -eq 'atlas-workspace' -and $health.ready -eq $true)
+  } catch { return $false }
+}
+
+$startedServer = $false
+
 if (-not (Test-WorkbenchPort -TargetPort $Port)) {
   New-Item -ItemType Directory -Path $runtimePath -Force | Out-Null
   $nodeCommand = Get-Command node.exe -ErrorAction SilentlyContinue
@@ -28,23 +37,27 @@ if (-not (Test-WorkbenchPort -TargetPort $Port)) {
   if (-not (Test-Path -LiteralPath $vinextCli)) {
     throw "Workspace dependencies are missing. Run pnpm install first."
   }
+  $vinextArgument = '"' + $vinextCli + '"'
 
   Start-Process `
     -FilePath $nodePath `
-    -ArgumentList @($vinextCli, "dev", "--port", "$Port") `
+    -ArgumentList @($vinextArgument, "dev", "--port", "$Port", "--strictPort") `
     -WorkingDirectory $projectPath `
     -WindowStyle Hidden `
     -RedirectStandardOutput $stdoutPath `
     -RedirectStandardError $stderrPath
 
-  $deadline = (Get-Date).AddSeconds(35)
-  while ((Get-Date) -lt $deadline -and -not (Test-WorkbenchPort -TargetPort $Port)) {
-    Start-Sleep -Milliseconds 500
-  }
+  $startedServer = $true
 }
 
-if (-not (Test-WorkbenchPort -TargetPort $Port)) {
-  throw "ATLAS failed to start. Check $stderrPath"
+if (-not $startedServer -and -not (Test-WorkbenchReady)) {
+  throw "Port $Port is occupied, but a ready ATLAS service was not found. Check $stderrPath or choose another port."
+}
+
+$deadline = (Get-Date).AddSeconds(45)
+while (-not (Test-WorkbenchReady)) {
+  if ((Get-Date) -ge $deadline) { throw "ATLAS failed to become ready. Check $stderrPath and apply local database migrations if needed." }
+  Start-Sleep -Milliseconds 500
 }
 
 if (-not $NoBrowser) {

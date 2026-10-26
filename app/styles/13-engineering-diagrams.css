@@ -1,0 +1,952 @@
+.engineering-topic-figure > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 21px;
+  border-bottom: 1px solid var(--border);
+}
+.engineering-topic-figure header small {
+  color: var(--gold);
+  font: 700 12px var(--font-number);
+  letter-spacing: 1.4px;
+}
+.engineering-topic-figure header h3 {
+  margin: 6px 0 0;
+  font-size: 20px;
+}
+.engineering-topic-figure header > span {
+  padding: 6px 9px;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font-size: 13px;
+}
+.engineering-schematic {
+  display: grid;
+  grid-template-columns: minmax(300px, 42%) 1fr;
+  gap: 22px;
+  padding: 21px;
+}
+.schematic-art {
+  position: relative;
+  min-height: 270px;
+  overflow: hidden;
+  background:
+    linear-gradient(rgba(166, 122, 35, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(166, 122, 35, 0.07) 1px, transparent 1px),
+    var(--surface);
+  background-size: 24px 24px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.schematic-art::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1px dashed color-mix(in srgb, var(--border-strong) 60%, transparent);
+  border-radius: 8px;
+  pointer-events: none;
+}
+.schematic-part,
+.schematic-line {
+  position: absolute;
+  display: block;
+  z-index: 1;
+  box-sizing: border-box;
+}
+.schematic-line {
+  height: 3px;
+  transform-origin: left center;
+  background: var(--gold);
+  border-radius: 8px;
+}
+.schematic-legend {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  align-content: center;
+}
+.schematic-legend article {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 10px;
+  min-width: 0;
+  padding: 13px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.schematic-legend article > span {
+  width: 29px;
+  height: 29px;
+  display: grid;
+  place-items: center;
+  color: var(--gold);
+  background: var(--gold-soft);
+  border-radius: 8px;
+  font: 700 12px var(--font-number);
+}
+.schematic-legend b {
+  display: block;
+  font-size: 16px;
+}
+.schematic-legend p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.7;
+}
+.engineering-topic-figure figcaption {
+  padding: 13px 21px;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  border-top: 1px solid var(--border);
+  font-size: 15px;
+  line-height: 1.8;
+}
+.engineering-topic-figure figcaption > b {
+  color: var(--text);
+}
+.engineering-topic-figure figcaption > span {
+  display: block;
+  margin-top: 5px;
+}
+.engineering-reference {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 31%);
+  gap: 20px;
+  align-items: center;
+  padding: 19px 21px;
+  border-top: 1px solid var(--border);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--surface) 92%, transparent),
+    color-mix(in srgb, #07141b 11%, var(--surface-2))
+  );
+}
+.engineering-reference > div small {
+  color: var(--gold);
+  font: 700 11px var(--font-number);
+  letter-spacing: 1.35px;
+}
+.engineering-reference h4 {
+  margin: 6px 0 8px;
+  font-size: 19px;
+}
+.engineering-reference p {
+  margin: 0;
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.8;
+}
+.engineering-reference > div > span {
+  display: block;
+  margin-top: 11px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.engineering-reference-photo {
+  position: relative;
+  aspect-ratio: 1;
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--gold) 35%, var(--border));
+  border-radius: 11px;
+  background: #071116;
+  box-shadow: 0 12px 24px rgba(4, 10, 13, 0.18);
+}
+.engineering-reference-photo::after {
+  content: "实物 / 剖视参考";
+  position: absolute;
+  left: 9px;
+  bottom: 8px;
+  z-index: 2;
+  padding: 4px 6px;
+  color: #ecdbc3;
+  background: rgba(5, 13, 17, 0.72);
+  border: 1px solid rgba(224, 181, 105, 0.32);
+  border-radius: 4px;
+  font: 700 10px var(--font-number);
+  letter-spacing: 0.8px;
+  backdrop-filter: blur(5px);
+}
+.engineering-reference-photo img {
+  position: absolute;
+  display: block;
+  width: 300%;
+  max-width: none;
+  height: auto;
+  left: 0;
+  top: 0;
+}
+.engineering-reference-photo[data-kind="motor"] img {
+  left: -100%;
+}
+.engineering-reference-photo[data-kind="can"] img {
+  left: -200%;
+}
+.engineering-reference-photo[data-kind="bearing"] img {
+  top: -100%;
+}
+.engineering-reference-photo[data-kind="suspension"] img {
+  left: -100%;
+  top: -100%;
+}
+.engineering-reference-photo[data-kind="control"] img {
+  left: -200%;
+  top: -100%;
+}
+.engineering-reference-photo.direct img {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  object-fit: cover;
+}
+.engineering-reference-photo.direct:is(
+    [data-profile-kind="engine"],
+    [data-profile-kind="embedded"]
+  ) img {
+  object-fit: contain;
+  background: #f4f4ef;
+}
+
+/* Generic relationship art for software, algorithms and broad knowledge topics. */
+.engineering-topic-figure:is(
+    [data-kind="ros"],
+    [data-kind="mechanics"],
+    [data-kind="engine"],
+    [data-kind="robot-training"],
+    [data-kind="reinforcement"],
+    [data-kind="embedded"],
+    [data-kind="rtos"],
+    [data-kind="interface"],
+    [data-kind="general"]
+  ) .schematic-part {
+  top: 39%;
+  width: 58px;
+  height: 58px;
+  background: color-mix(in srgb, var(--surface) 88%, var(--gold-soft));
+  border: 2px solid color-mix(in srgb, var(--gold) 55%, var(--border));
+  border-radius: 12px;
+  box-shadow: 0 9px 18px rgba(35, 31, 24, 0.09);
+}
+.engineering-topic-figure:is(
+    [data-kind="ros"], [data-kind="mechanics"], [data-kind="engine"],
+    [data-kind="robot-training"], [data-kind="reinforcement"],
+    [data-kind="embedded"], [data-kind="rtos"], [data-kind="interface"],
+    [data-kind="general"]
+  ) .part-a { left: 8%; }
+.engineering-topic-figure:is(
+    [data-kind="ros"], [data-kind="mechanics"], [data-kind="engine"],
+    [data-kind="robot-training"], [data-kind="reinforcement"],
+    [data-kind="embedded"], [data-kind="rtos"], [data-kind="interface"],
+    [data-kind="general"]
+  ) .part-b { left: 32%; }
+.engineering-topic-figure:is(
+    [data-kind="ros"], [data-kind="mechanics"], [data-kind="engine"],
+    [data-kind="robot-training"], [data-kind="reinforcement"],
+    [data-kind="embedded"], [data-kind="rtos"], [data-kind="interface"],
+    [data-kind="general"]
+  ) .part-c { left: 57%; }
+.engineering-topic-figure:is(
+    [data-kind="ros"], [data-kind="mechanics"], [data-kind="engine"],
+    [data-kind="robot-training"], [data-kind="reinforcement"],
+    [data-kind="embedded"], [data-kind="rtos"], [data-kind="interface"],
+    [data-kind="general"]
+  ) .part-d { left: 81%; }
+.engineering-topic-figure:is(
+    [data-kind="ros"], [data-kind="mechanics"], [data-kind="engine"],
+    [data-kind="robot-training"], [data-kind="reinforcement"],
+    [data-kind="embedded"], [data-kind="rtos"], [data-kind="interface"],
+    [data-kind="general"]
+  ) .line-a {
+  left: 12%;
+  top: 50%;
+  width: 72%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), #7194ad, #7da18b);
+}
+.engineering-topic-figure:is(
+    [data-kind="ros"], [data-kind="robot-training"],
+    [data-kind="reinforcement"], [data-kind="rtos"], [data-kind="general"]
+  ) .line-b {
+  left: 20%;
+  top: 72%;
+  width: 61%;
+  height: 1px;
+  background: repeating-linear-gradient(90deg, #7da18b 0 16px, transparent 16px 23px);
+}
+
+/* Robot arm: joints, two links, base and target */
+.engineering-topic-figure[data-kind="robot"] .part-a {
+  left: 18%;
+  bottom: 18%;
+  width: 74px;
+  height: 30px;
+  background: color-mix(in srgb, var(--gold) 82%, #503d24);
+  border-radius: 8px 8px 4px 4px;
+}
+.engineering-topic-figure[data-kind="robot"] .part-b {
+  left: 29%;
+  bottom: 31%;
+  width: 108px;
+  height: 22px;
+  transform: rotate(-49deg);
+  background: #7895a6;
+  border: 4px solid var(--surface);
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px #5f7e90;
+}
+.engineering-topic-figure[data-kind="robot"] .part-c {
+  left: 50%;
+  top: 29%;
+  width: 92px;
+  height: 20px;
+  transform: rotate(25deg);
+  background: #8bb39c;
+  border: 4px solid var(--surface);
+  border-radius: 12px;
+  box-shadow: 0 0 0 1px #6b987f;
+}
+.engineering-topic-figure[data-kind="robot"] .part-d {
+  right: 17%;
+  top: 35%;
+  width: 42px;
+  height: 42px;
+  border: 7px double var(--gold);
+  border-radius: 50%;
+  box-shadow:
+    -145px 68px 0 -10px var(--gold),
+    -64px 1px 0 -10px #6b987f;
+}
+.engineering-topic-figure[data-kind="robot"] .line-a {
+  left: 22%;
+  bottom: 17%;
+  width: 57%;
+  height: 1px;
+  background: var(--border-strong);
+}
+
+/* Motor: stator, rotor, shaft and three-phase field */
+.engineering-topic-figure[data-kind="motor"] .part-a {
+  left: 18%;
+  top: 16%;
+  width: 184px;
+  height: 184px;
+  border: 20px double #718b9a;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 17px var(--gold-soft);
+}
+.engineering-topic-figure[data-kind="motor"] .part-b {
+  left: calc(18% + 55px);
+  top: calc(16% + 55px);
+  width: 74px;
+  height: 74px;
+  background: linear-gradient(90deg, #b66b67 50%, #6f95b3 50%);
+  border: 8px solid var(--surface);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--border-strong);
+}
+.engineering-topic-figure[data-kind="motor"] .part-c {
+  left: calc(18% + 91px);
+  top: 7%;
+  width: 3px;
+  height: 224px;
+  background: var(--gold);
+}
+.engineering-topic-figure[data-kind="motor"] .part-d {
+  right: 13%;
+  top: 29%;
+  width: 76px;
+  height: 76px;
+  border: 10px dotted #8bb39c;
+  border-radius: 50%;
+}
+.engineering-topic-figure[data-kind="motor"] .line-a {
+  left: 61%;
+  top: 49%;
+  width: 25%;
+  background: #718b9a;
+}
+
+/* CAN: differential bus with connected ECU nodes */
+.engineering-topic-figure[data-kind="can"] .part-a,
+.engineering-topic-figure[data-kind="can"] .part-b,
+.engineering-topic-figure[data-kind="can"] .part-c,
+.engineering-topic-figure[data-kind="can"] .part-d {
+  top: 24%;
+  width: 62px;
+  height: 48px;
+  background: var(--surface);
+  border: 2px solid #6f95b3;
+  border-radius: 9px;
+  box-shadow: 0 8px 16px rgba(55, 80, 95, 0.12);
+}
+.engineering-topic-figure[data-kind="can"] .part-a {
+  left: 8%;
+}
+.engineering-topic-figure[data-kind="can"] .part-b {
+  left: 33%;
+}
+.engineering-topic-figure[data-kind="can"] .part-c {
+  left: 58%;
+}
+.engineering-topic-figure[data-kind="can"] .part-d {
+  left: 80%;
+}
+.engineering-topic-figure[data-kind="can"] .line-a {
+  left: 8%;
+  top: 61%;
+  width: 82%;
+  background: #6f95b3;
+  box-shadow: 0 8px 0 #c48b71;
+}
+.engineering-topic-figure[data-kind="can"] .line-b {
+  left: 16%;
+  top: 42%;
+  width: 52px;
+  transform: rotate(90deg);
+  background: var(--border-strong);
+}
+.engineering-topic-figure[data-kind="can"] .line-c {
+  right: 13%;
+  top: 42%;
+  width: 52px;
+  transform: rotate(90deg);
+  background: var(--border-strong);
+}
+
+/* Bearing: raceways, balls, shaft and load arrow */
+.engineering-topic-figure[data-kind="bearing"] .part-a {
+  left: 18%;
+  top: 15%;
+  width: 190px;
+  height: 190px;
+  border: 18px solid #6f8794;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 0 23px var(--surface),
+    inset 0 0 0 39px var(--gold-light);
+}
+.engineering-topic-figure[data-kind="bearing"] .part-b {
+  left: calc(18% + 70px);
+  top: calc(15% + 70px);
+  width: 50px;
+  height: 50px;
+  background: #596c78;
+  border-radius: 50%;
+}
+.engineering-topic-figure[data-kind="bearing"] .part-c {
+  left: calc(18% + 27px);
+  top: calc(15% + 27px);
+  width: 136px;
+  height: 136px;
+  border: 13px dotted #c5a45e;
+  border-radius: 50%;
+}
+.engineering-topic-figure[data-kind="bearing"] .part-d {
+  right: 13%;
+  top: 27%;
+  width: 54px;
+  height: 106px;
+  border-left: 4px solid #c8786e;
+  border-bottom: 4px solid #c8786e;
+  transform: skewY(-28deg);
+}
+
+/* Suspension: body, spring/damper, wheel and road */
+.engineering-topic-figure[data-kind="suspension"] .part-a {
+  left: 13%;
+  top: 17%;
+  width: 190px;
+  height: 51px;
+  background: #788f9b;
+  border-radius: 14px 14px 5px 5px;
+  box-shadow: 0 8px 0 var(--border-strong);
+}
+.engineering-topic-figure[data-kind="suspension"] .part-b {
+  left: 30%;
+  top: 42%;
+  width: 60px;
+  height: 60px;
+  border: 10px double var(--gold);
+  border-radius: 50%;
+}
+.engineering-topic-figure[data-kind="suspension"] .part-c {
+  left: 26%;
+  bottom: 13%;
+  width: 90px;
+  height: 90px;
+  background: var(--surface);
+  border: 15px solid #48545d;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 4px #94a7b0;
+}
+.engineering-topic-figure[data-kind="suspension"] .part-d {
+  left: 12%;
+  bottom: 8%;
+  width: 73%;
+  height: 4px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--border-strong) 0 18px,
+    transparent 18px 28px
+  );
+}
+.engineering-topic-figure[data-kind="suspension"] .line-a {
+  left: 45%;
+  top: 36%;
+  width: 90px;
+  transform: rotate(90deg);
+  background: #8bb39c;
+}
+
+/* Generic closed loop */
+.engineering-topic-figure[data-kind="control"] .part-a,
+.engineering-topic-figure[data-kind="control"] .part-b,
+.engineering-topic-figure[data-kind="control"] .part-c {
+  top: 35%;
+  width: 76px;
+  height: 56px;
+  background: var(--surface);
+  border: 2px solid var(--gold);
+  border-radius: 10px;
+}
+.engineering-topic-figure[data-kind="control"] .part-a {
+  left: 8%;
+}
+.engineering-topic-figure[data-kind="control"] .part-b {
+  left: 38%;
+  border-color: #7192a4;
+}
+.engineering-topic-figure[data-kind="control"] .part-c {
+  right: 8%;
+  border-color: #7a9c88;
+}
+.engineering-topic-figure[data-kind="control"] .part-d {
+  left: 45%;
+  bottom: 13%;
+  width: 62px;
+  height: 34px;
+  background: var(--gold-soft);
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+}
+.engineering-topic-figure[data-kind="control"] .line-a {
+  left: 25%;
+  top: 45%;
+  width: 13%;
+}
+.engineering-topic-figure[data-kind="control"] .line-b {
+  left: 58%;
+  top: 45%;
+  width: 14%;
+  background: #7192a4;
+}
+.engineering-topic-figure[data-kind="control"] .line-c {
+  left: 21%;
+  bottom: 23%;
+  width: 57%;
+  height: 2px;
+  background: #7a9c88;
+}
+
+.application-visual {
+  position: relative;
+  height: 96px;
+  margin: -18px -18px 16px;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, var(--gold-soft), transparent 68%), var(--surface-3);
+  border-bottom: 1px solid var(--border);
+}
+.application-visual i,
+.application-visual span {
+  position: absolute;
+  display: block;
+  box-sizing: border-box;
+}
+.application-visual i:nth-child(1) {
+  left: 10%;
+  bottom: 17px;
+  width: 66px;
+  height: 48px;
+  border: 7px solid var(--gold);
+  border-radius: 50%;
+}
+.application-visual i:nth-child(2) {
+  left: 38%;
+  top: 20px;
+  width: 62px;
+  height: 42px;
+  background: color-mix(in srgb, var(--surface) 82%, var(--gold-soft));
+  border: 2px solid #7290a1;
+  border-radius: 8px;
+}
+.application-visual i:nth-child(3) {
+  right: 9%;
+  top: 30px;
+  width: 42px;
+  height: 42px;
+  border: 8px double #7da18b;
+  border-radius: 50%;
+}
+.application-visual span {
+  left: 22%;
+  right: 17%;
+  top: 48px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), #7290a1, #7da18b);
+}
+.application-visual[data-kind="robot"] i:nth-child(1) {
+  border-radius: 8px;
+  height: 26px;
+  transform: rotate(-28deg);
+}
+.application-visual[data-kind="robot"] i:nth-child(2) {
+  width: 72px;
+  height: 19px;
+  transform: rotate(24deg);
+  border-radius: 10px;
+}
+.application-visual[data-kind="can"] i {
+  border-radius: 7px !important;
+  border-width: 2px !important;
+}
+.application-visual[data-kind="can"] span {
+  left: 8%;
+  right: 8%;
+  top: 70px;
+  box-shadow: 0 6px 0 #c58c73;
+}
+.application-visual[data-kind="suspension"] i:nth-child(1) {
+  left: 16%;
+  top: 13px;
+  width: 110px;
+  height: 30px;
+  border: 0;
+  border-radius: 10px;
+  background: #78909d;
+}
+.application-visual[data-kind="suspension"] i:nth-child(2) {
+  left: 39%;
+  top: 46px;
+  width: 42px;
+  height: 42px;
+  border: 9px solid #4e5961;
+  border-radius: 50%;
+}
+.application-visual[data-kind="suspension"] span {
+  top: 88px;
+  left: 8%;
+  right: 8%;
+}
+.application-visual[data-kind="bearing"] i:nth-child(1),
+.application-visual[data-kind="motor"] i:nth-child(1) {
+  left: 13%;
+  top: 10px;
+  width: 74px;
+  height: 74px;
+  border: 13px double #738c99;
+}
+.application-visual[data-kind="bearing"] i:nth-child(2),
+.application-visual[data-kind="motor"] i:nth-child(2) {
+  left: 34%;
+  top: 29px;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+@media (max-width: 900px) {
+  .engineering-schematic {
+    grid-template-columns: 1fr;
+  }
+  .schematic-art {
+    min-height: 250px;
+  }
+  .schematic-legend {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 760px) {
+  .detail-main h2 {
+    font-size: 24px;
+  }
+  .section-lead {
+    font-size: 16px;
+  }
+  .detail-main blockquote {
+    font-size: 17px;
+  }
+  .theory-grid h3,
+  .principle-grid h3,
+  .method-compare h3,
+  .application-grid h3,
+  .frontier-list h3,
+  .reading-list h3 {
+    font-size: 18px;
+  }
+  .theory-grid p,
+  .principle-grid p,
+  .method-steps p,
+  .method-compare > article > p,
+  .method-compare footer,
+  .learning-objectives li,
+  .engineering-checklist li,
+  .boundary-list li,
+  .application-grid dd,
+  .frontier-list > article > p,
+  .frontier-list footer span,
+  .reading-list p,
+  .principle-caption,
+  .principle-step article p,
+  .equation-card > p,
+  .worked-example > ol p,
+  .worked-example > footer p,
+  .verification-box p,
+  .key-points p,
+  .derivation-flow p {
+    font-size: 16px;
+    line-height: 1.85;
+  }
+  .engineering-topic-figure > header {
+    flex-direction: column;
+    padding: 16px;
+  }
+  .engineering-schematic {
+    padding: 14px;
+  }
+  .schematic-art {
+    min-height: 220px;
+  }
+  .schematic-legend {
+    grid-template-columns: 1fr;
+  }
+  .engineering-reference {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+  .engineering-reference-photo {
+    width: min(100%, 320px);
+  }
+  .engineering-topic-figure figcaption {
+    padding: 12px 16px;
+  }
+  .application-visual {
+    height: 104px;
+  }
+  .code-example pre {
+    font-size: 15px;
+  }
+}
+.insight-view .signal-card {
+  display: none !important;
+}
+.insight-view .news-layout {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+.motor-mechanics-lesson {
+  margin: 24px 0 0;
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  background: linear-gradient(
+    145deg,
+    var(--surface-2),
+    color-mix(in srgb, var(--surface) 88%, var(--gold-soft))
+  );
+}
+.motor-mechanics-lesson > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 22px;
+  border-bottom: 1px solid var(--border);
+}
+.motor-mechanics-lesson > header small {
+  color: var(--gold);
+  font: 700 12px var(--font-number);
+  letter-spacing: 0.13em;
+}
+.motor-mechanics-lesson > header h3 {
+  margin: 7px 0 0;
+  font-size: 22px;
+}
+.motor-mechanics-lesson > header > span {
+  color: var(--muted);
+  font-size: 14px;
+}
+.motor-cutaway {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(260px, 0.8fr);
+  gap: 24px;
+  align-items: center;
+  padding: 26px 24px;
+  background: radial-gradient(
+    circle at 29% 50%,
+    var(--gold-soft),
+    transparent 42%
+  );
+}
+.motor-housing {
+  position: relative;
+  width: min(100%, 440px);
+  height: 190px;
+  margin: auto;
+  border: 12px solid color-mix(in srgb, var(--muted) 55%, var(--surface));
+  border-radius: 48% 48% 43% 43%;
+  box-shadow:
+    inset 0 0 0 8px var(--surface),
+    0 14px 28px rgba(0, 0, 0, 0.08);
+}
+.motor-housing i {
+  position: absolute;
+  display: block;
+  box-sizing: border-box;
+}
+.motor-stator {
+  inset: 16px 52px;
+  border: 17px double #718b9a;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 10px color-mix(in srgb, #b66b67 26%, transparent);
+}
+.motor-rotor {
+  left: 50%;
+  top: 50%;
+  width: 94px;
+  height: 94px;
+  transform: translate(-50%, -50%);
+  border: 13px solid var(--gold);
+  border-radius: 50%;
+  background: conic-gradient(
+    #b66b67 0 25%,
+    #7397b2 0 50%,
+    #b66b67 0 75%,
+    #7397b2 0
+  );
+}
+.motor-shaft {
+  left: -34px;
+  right: -34px;
+  top: calc(50% - 6px);
+  height: 12px;
+  z-index: 3;
+  border-radius: 8px;
+  background: linear-gradient(#87939a, #46545c);
+  box-shadow: 0 2px 0 rgba(255, 255, 255, 0.35) inset;
+}
+.motor-bearing {
+  top: calc(50% - 23px);
+  z-index: 4;
+  width: 46px;
+  height: 46px;
+  border: 9px double #53616a;
+  border-radius: 50%;
+  background: var(--surface);
+}
+.bearing-left {
+  left: 21px;
+}
+.bearing-right {
+  right: 21px;
+}
+.motor-load-path {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+.motor-load-path span {
+  padding: 10px 13px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: 700;
+}
+.motor-load-path i {
+  color: var(--gold);
+  font-style: normal;
+  font-size: 20px;
+}
+.motor-assembly-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 0 24px 24px;
+}
+.motor-assembly-grid article {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--surface);
+}
+.motor-assembly-grid article > span {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  color: var(--gold-light);
+  background: var(--gold-soft);
+  border-radius: 50%;
+  font: 700 16px var(--font-number);
+}
+.motor-assembly-grid small {
+  color: var(--gold);
+  font: 700 11px var(--font-number);
+}
+.motor-assembly-grid h4 {
+  margin: 4px 0 5px;
+  font-size: 17px;
+}
+.motor-assembly-grid p {
+  margin: 0 0 9px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.7;
+}
+.motor-assembly-grid b {
+  color: var(--muted-2);
+  font-size: 13px;
+}
+.motor-mechanics-lesson > footer {
+  padding: 16px 22px;
+  color: var(--muted);
+  background: var(--gold-soft);
+  font-size: 15px;
+  line-height: 1.8;
+}
+.motor-mechanics-lesson > footer b {
+  color: var(--gold-light);
+}
+@media (max-width: 760px) {
+  .motor-cutaway {
+    grid-template-columns: 1fr;
+    padding: 20px 15px;
+  }
+  .motor-housing {
+    height: 155px;
+  }
+  .motor-assembly-grid {
+    grid-template-columns: 1fr;
+    padding: 0 15px 15px;
+  }
+  .motor-mechanics-lesson > header {
+    padding: 17px 16px;
+  }
+  .motor-mechanics-lesson > header > span {
+    display: none;
+  }
+}

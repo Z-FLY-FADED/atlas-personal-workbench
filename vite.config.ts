@@ -1,7 +1,14 @@
 import vinext from "vinext";
+import { existsSync, readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { defineConfig, loadEnv } from "vite";
-import hostingConfig from "./.openai/hosting.json";
+import hostingExample from "./.openai/hosting.example.json";
 import { sites } from "./build/sites-vite-plugin";
+
+const localHostingPath = fileURLToPath(new URL("./.openai/hosting.json", import.meta.url));
+const hostingConfig: { d1?: string | null; r2?: string | null } = existsSync(localHostingPath)
+  ? JSON.parse(readFileSync(localHostingPath, "utf8"))
+  : hostingExample;
 
 const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
   "00000000-0000-4000-8000-000000000000";
@@ -58,7 +65,9 @@ export default defineConfig(async ({ mode }) => {
       sites(),
       cloudflare({
         viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
-        config: localBindingConfig,
+        // Replace binding arrays in place: the plugin's object merge concatenates
+        // them with wrangler.jsonc and otherwise emits duplicate DB bindings.
+        config: (config) => { Object.assign(config, localBindingConfig); },
       }),
     ],
   };

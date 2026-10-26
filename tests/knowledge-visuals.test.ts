@@ -5,8 +5,8 @@ import test from "node:test";
 import {
   getKnowledgeTextbookMedia,
   getKnowledgeVisualProfile,
-} from "../app/page";
-import { CURATED_MAINSTREAM_KNOWLEDGE } from "../app/knowledge-mainstream";
+} from "../app/features/knowledge/domain/visualProfiles";
+import { CURATED_MAINSTREAM_KNOWLEDGE } from "../app/features/knowledge/domain/mainstream";
 
 const visualCases = [
   ["STM32 CAN 通信故障排查", "嵌入式 RTOS与通信", "can"],

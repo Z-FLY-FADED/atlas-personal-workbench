@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { formatProjectDueDate, projectDueDateInputValue } from "../app/components/workspace/projectDates";
+import { formatProjectDueDate, projectDueDateInputValue } from "../app/features/workspace/domain/projectDates";
 
 test("project due date accepts saved ISO dates", () => {
   assert.equal(projectDueDateInputValue("2027-02-18"), "2027-02-18");

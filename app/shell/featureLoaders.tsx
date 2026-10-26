@@ -1,0 +1,10 @@
+"use client";
+import dynamic from "next/dynamic";
+export const WeeklyReview = dynamic(() => import("../features/workspace/components/WeeklyReview").then(module => module.WeeklyReview), { loading: () => <p role="status">正在打开每周总结…</p> });
+export const SpacedReview = dynamic(() => import("../features/learning/components/SpacedReview").then(module => module.SpacedReview), { loading: () => <p role="status">正在打开语言复习…</p> });
+export const DataCenter = dynamic(() => import("../features/data/components/DataCenter").then(module => module.DataCenter), { loading: () => <p>正在打开数据与恢复…</p> });
+export const KnowledgeLibrary = dynamic(() => import("../features/knowledge/components/KnowledgeLibrary").then(module => module.KnowledgeLibrary), { loading: () => <p role="status">正在打开资料库…</p> });
+export const CareerWorkspace = dynamic(() => import("../features/career/components/CareerWorkspace").then(module => module.CareerWorkspace), { loading: () => <p role="status">正在打开招聘与投递…</p> });
+export const IndustryWorkspace = dynamic(() => import("../features/industry/components/IndustryWorkspace").then(module => module.IndustryWorkspace), { loading: () => <p role="status">正在打开行业速览…</p> });
+export const StockWorkspace = dynamic(() => import("../features/market/components/StockWorkspace").then(module => module.StockWorkspace), { loading: () => <p role="status">正在打开股票研究…</p> });
+export const MathFormula = dynamic(() => import("../features/knowledge/components/MathFormula").then(module => module.MathFormula));

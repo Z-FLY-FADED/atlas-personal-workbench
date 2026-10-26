@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { marketIdentity, parseSignedNumber } from "../app/market-domain";
+import { marketIdentity, parseSignedNumber } from "../app/features/market/domain/market";
 
 test("marketIdentity creates stable cross-market instrument ids", () => {
   assert.deepEqual(marketIdentity("A股", "600000"), {

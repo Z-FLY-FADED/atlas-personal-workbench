@@ -1,0 +1,953 @@
+@media (max-width: 760px) {
+  .learning-objectives,
+  .engineering-checklist,
+  .equation-meta {
+    grid-template-columns: 1fr;
+  }
+  .theory-grid article {
+    padding: 15px 15px 15px 47px;
+  }
+  .equation-formula {
+    font-size: 13px;
+  }
+  .detail-main > section {
+    padding-bottom: 25px;
+    margin-bottom: 25px;
+  }
+  .worked-example > header,
+  .worked-example > ol,
+  .worked-example > footer,
+  .example-given {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+  .evidence-list a {
+    grid-template-columns: 24px 1fr;
+  }
+  .evidence-list a > b {
+    grid-column: 2;
+  }
+  .evidence-verdict > div {
+    grid-template-columns: 27px 1fr;
+  }
+  .evidence-verdict strong {
+    grid-column: 2;
+    font-size: 18px;
+  }
+}
+@media (max-width: 760px) {
+  .task-title-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .task-title-actions .primary,
+  .task-title-actions .secondary-action {
+    flex: 1;
+  }
+  .task-history > header {
+    align-items: flex-start;
+  }
+  .history-list article {
+    grid-template-columns: 25px 1fr;
+    padding: 12px 14px;
+  }
+  .history-list article > button {
+    grid-column: 2;
+    justify-self: start;
+  }
+  .toast.with-action {
+    justify-content: flex-start;
+  }
+  .toast.with-action b {
+    flex: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* 2026 visual system — larger, calmer typography and unified CJK/numeral rhythm */
+:root {
+  --font-cn:
+    "Microsoft YaHei UI", "PingFang SC", "Noto Sans CJK SC", "Noto Sans SC",
+    sans-serif;
+  --font-display:
+    "Microsoft YaHei UI", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+  --font-number:
+    "Segoe UI Variable", "Microsoft YaHei UI", "PingFang SC", sans-serif;
+  --ui-radius: 16px;
+  --ui-shadow: 0 14px 38px rgba(0, 0, 0, 0.09), 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+html {
+  font-size: 18px;
+}
+body {
+  font-family: var(--font-cn);
+  font-size: 16px;
+  line-height: 1.65;
+  letter-spacing: 0.005em;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+button,
+input,
+select,
+textarea {
+  letter-spacing: 0.005em;
+}
+.panel {
+  border-radius: var(--ui-radius);
+  box-shadow: var(--ui-shadow);
+}
+.app-shell {
+  background:
+    radial-gradient(circle at 74% -8%, var(--accent-glow), transparent 32%),
+    radial-gradient(
+      circle at 15% 92%,
+      color-mix(in srgb, var(--gold-soft) 42%, transparent),
+      transparent 30%
+    ),
+    var(--bg);
+}
+.sidebar {
+  width: 252px;
+  padding: 32px 20px 22px;
+}
+.content-shell {
+  width: calc(100% - 252px);
+  margin-left: 252px;
+}
+.page {
+  width: min(1380px, calc(100% - 72px));
+  padding: 48px 0 72px;
+}
+.workspace-topbar {
+  height: 78px;
+  padding: 0 38px;
+}
+.search {
+  width: min(520px, 46vw);
+  height: 42px;
+  border-radius: 11px;
+}
+.search input {
+  font-size: 15px;
+}
+.search kbd {
+  font: 13px/1 var(--font-number);
+}
+
+.brand b {
+  font-family: var(--font-number);
+  font-size: 19px;
+  font-weight: 750;
+  letter-spacing: 2.4px;
+}
+.brand small {
+  font-size: 13px;
+  letter-spacing: 1.6px;
+}
+.sidebar nav p {
+  margin-top: 18px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.sidebar nav button {
+  min-height: 45px;
+  padding: 12px 13px;
+  font-size: 16px;
+  font-weight: 520;
+}
+.sidebar nav em,
+.sync-card small,
+.profile small {
+  font-size: 13px;
+}
+.sync-card b,
+.profile b {
+  font-size: 15px;
+}
+.theme-trigger b,
+.theme-menu > button > span:nth-child(2) b {
+  font-size: 14px;
+}
+.theme-menu-head span {
+  font-size: 16px;
+}
+.theme-menu-head small,
+.theme-menu > button > span:nth-child(2) small {
+  font-size: 13px;
+}
+.primary,
+.secondary-action {
+  min-height: 40px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+.welcome,
+.view-title {
+  align-items: flex-end;
+  margin-bottom: 34px;
+}
+.welcome p,
+.view-title p {
+  margin-bottom: 9px;
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: 1.7px;
+}
+.welcome h1,
+.view-title h1 {
+  font-family: var(--font-display);
+  font-size: calc(clamp(30px, 2.4vw, 38px) + 2px);
+  font-weight: 650;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+.welcome h2,
+.view-title h2 {
+  margin-top: 10px;
+  font-size: 16px;
+  line-height: 1.7;
+}
+.capture {
+  width: 280px;
+  padding: 15px 17px;
+  border-radius: 14px;
+  box-shadow: var(--ui-shadow);
+}
+.capture b {
+  font-size: 16px;
+}
+.capture small {
+  font-size: 14px;
+}
+
+.stats-grid {
+  gap: 16px;
+  margin-bottom: 22px;
+}
+.stats-grid article {
+  min-height: 104px;
+  padding: 21px;
+  border-radius: var(--ui-radius);
+  box-shadow: var(--ui-shadow);
+}
+.stats-grid small {
+  font-size: 14px;
+}
+.stats-grid strong {
+  font: 650 32px/1.4 var(--font-number);
+  letter-spacing: -0.025em;
+}
+.stats-grid strong i {
+  font: 14px var(--font-cn);
+}
+.stats-grid p {
+  font-size: 13px;
+}
+.task-overview {
+  gap: 16px;
+  margin-bottom: 22px;
+}
+.task-overview article {
+  padding: 21px 22px;
+  border-radius: var(--ui-radius);
+  box-shadow: var(--ui-shadow);
+}
+.task-overview small {
+  font-size: 14px;
+}
+.task-overview strong {
+  font: 650 33px/1.35 var(--font-number);
+}
+.panel-head {
+  min-height: 82px;
+  padding: 0 24px;
+}
+.panel-head h3 {
+  font-size: 18px;
+}
+.panel-head p,
+.panel-head > button {
+  font-size: 14px;
+}
+.tabs {
+  gap: 32px;
+  padding: 0 24px;
+}
+.tabs button {
+  padding-bottom: 14px;
+  font-size: 15px;
+}
+.tabs button span {
+  font-size: 13px;
+}
+.task-row {
+  min-height: 70px;
+  grid-template-columns: 25px minmax(210px, 1fr) 85px 105px 34px;
+  gap: 14px;
+  padding: 11px 24px;
+}
+.checkmark {
+  width: 19px;
+  height: 19px;
+  font-size: 13px;
+}
+.task-copy strong {
+  font-size: 16px;
+}
+.task-copy small {
+  font-size: 14px;
+}
+.priority,
+.task-date {
+  font-size: 14px;
+}
+.row-more {
+  font-size: 14px;
+}
+.task-edit {
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+}
+.active-task-label {
+  padding: 15px 23px 2px;
+}
+.active-task-label span,
+.active-task-label p {
+  font-size: 12px;
+}
+.task-history header small {
+  font-size: 12px;
+}
+.task-history header h3 {
+  font-size: 18px;
+}
+.task-history header p,
+.task-history header > span {
+  font-size: 14px;
+}
+.history-list article {
+  padding: 16px 22px;
+}
+.history-list b {
+  font-size: 15px;
+}
+.history-list small,
+.history-list em,
+.history-list button {
+  font-size: 13px;
+}
+
+.tool-launcher {
+  gap: 16px;
+  margin: 20px 0;
+}
+.tool-launcher > button {
+  padding: 20px;
+  border-radius: var(--ui-radius);
+  box-shadow: var(--ui-shadow);
+}
+.tool-launcher small {
+  font-size: 11px;
+}
+.tool-launcher b {
+  font-size: 17px;
+}
+.tool-launcher p {
+  font-size: 14px;
+}
+.lower-grid,
+.review-grid {
+  gap: 22px;
+}
+.knowledge-mini b {
+  font-size: 15px;
+}
+.knowledge-mini small {
+  font-size: 14px;
+}
+.knowledge-mini em,
+.week-chart small,
+.week-note {
+  font-size: 13px;
+}
+
+.source-strip {
+  min-height: 52px;
+  padding: 13px 18px;
+  margin-bottom: 21px;
+  border-radius: 13px;
+  box-shadow: var(--ui-shadow);
+}
+.source-strip span {
+  font-size: 14px;
+}
+.source-strip b {
+  padding: 7px 11px;
+  font-size: 13px;
+}
+.category-row {
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.category-row button {
+  padding: 9px 15px;
+  font-size: 14px;
+  border-radius: 22px;
+}
+.knowledge-grid {
+  gap: 17px;
+}
+.knowledge-grid article {
+  min-height: 246px;
+  padding: 22px;
+  border-radius: var(--ui-radius);
+  box-shadow: var(--ui-shadow);
+}
+.knowledge-top > span {
+  width: 32px;
+  height: 32px;
+  font: 650 14px var(--font-number);
+}
+.knowledge-top em {
+  font-size: 13px;
+}
+.knowledge-grid h3 {
+  margin: 19px 0 10px;
+  font-size: 18px;
+  line-height: 1.55;
+}
+.knowledge-grid p {
+  font-size: 15px;
+  line-height: 1.85;
+}
+.knowledge-grid footer span,
+.knowledge-grid time,
+.card-more,
+.enrichment-note {
+  font-size: 12px;
+}
+.visual-head {
+  padding: 22px 24px 11px;
+}
+.visual-head > div:first-child > span {
+  font-size: 12px;
+}
+.visual-head h3 {
+  font-size: 19px;
+}
+.visual-head p,
+.visual-legend {
+  font-size: 13px;
+}
+.topic-stream button,
+.topic-stream small {
+  font-size: 13px;
+}
+
+.review-main {
+  padding: 36px;
+}
+.eyebrow {
+  font-size: 13px;
+}
+.review-main > h3 {
+  font: 650 27px/1.45 var(--font-display);
+}
+.review-main > p {
+  font-size: 16px;
+  line-height: 1.95;
+}
+.highlight-list span {
+  font: 650 16px var(--font-number);
+}
+.highlight-list p {
+  font-size: 15px;
+}
+.highlight-list b {
+  font-size: 16px;
+}
+.review-side {
+  padding: 28px;
+}
+.review-side h3 {
+  font-size: 18px;
+}
+.review-side div {
+  font-size: 15px;
+}
+.review-side div strong {
+  font: 650 21px var(--font-number);
+}
+.review-side blockquote {
+  font: 500 18px/1.85 var(--font-display);
+}
+
+.pipeline-stats {
+  gap: 15px;
+  margin-bottom: 21px;
+}
+.pipeline-stats article {
+  padding: 20px 22px;
+  border-radius: 14px;
+  box-shadow: var(--ui-shadow);
+}
+.pipeline-stats small {
+  font-size: 14px;
+}
+.pipeline-stats strong {
+  font: 650 32px var(--font-number);
+}
+.career-mode-tabs button {
+  min-width: 165px;
+  padding: 13px 16px;
+  font-size: 15px;
+}
+.career-mode-tabs button > span,
+.career-mode-tabs button > em {
+  font-family: var(--font-number);
+  font-size: 13px;
+}
+.job-toolbar {
+  padding: 18px 20px;
+  gap: 18px;
+}
+.job-search {
+  min-height: 44px;
+}
+.job-search input {
+  font-size: 15px;
+}
+.job-filter-row small {
+  font-size: 12px;
+}
+.job-filter-row button {
+  padding: 7px 10px;
+  font-size: 13px;
+}
+.job-result-meta b {
+  font-size: 16px;
+}
+.job-result-meta span {
+  font-size: 13px;
+}
+.job-grid {
+  gap: 16px;
+}
+.job-card {
+  padding: 22px;
+  border-radius: var(--ui-radius);
+}
+.job-card-head h3 {
+  font-size: 18px;
+}
+.job-card-head > div > span {
+  font-size: 13px;
+}
+.job-card-head > b {
+  font: 650 26px var(--font-number);
+}
+.job-card-head > b small {
+  font-size: 10px;
+}
+.job-badges span,
+.job-badges em {
+  padding: 5px 8px;
+  font-size: 12px;
+}
+.job-card > p {
+  min-height: 58px;
+  font-size: 15px;
+  line-height: 1.85;
+}
+.job-card dt {
+  font-size: 12px;
+}
+.job-card dd {
+  font-size: 13px;
+}
+.job-source b {
+  font-size: 13px;
+}
+.job-source small {
+  font-size: 12px;
+}
+.job-card > footer button,
+.job-card > footer a {
+  min-height: 42px;
+  font-size: 14px;
+}
+.application-card {
+  padding: 22px;
+}
+.application-copy h3 {
+  font-size: 17px;
+}
+.application-copy > div > span,
+.application-copy p {
+  font-size: 14px;
+}
+.application-copy footer,
+.application-next small {
+  font-size: 12px;
+}
+.application-next b,
+.application-next select {
+  font-size: 14px;
+}
+
+.risk-notice {
+  padding: 16px 18px;
+  border-radius: 13px;
+}
+.risk-notice p {
+  font-size: 14px;
+  line-height: 1.75;
+}
+.market-meta,
+.methodology-note {
+  font-size: 13px;
+}
+.stock-grid {
+  gap: 16px;
+}
+.stock-card {
+  padding: 23px;
+  border-radius: var(--ui-radius);
+}
+.stock-head > div span {
+  font: 650 13px var(--font-number);
+}
+.stock-head b {
+  font-size: 13px;
+}
+.stock-head > em {
+  font-size: 12px;
+}
+.stock-card > h3 {
+  font-size: 19px;
+}
+.stock-card > h3 small {
+  font: 13px var(--font-number);
+}
+.quote strong {
+  font: 650 33px var(--font-number);
+}
+.quote span {
+  font: 14px var(--font-number);
+}
+.score > span {
+  font-size: 13px;
+}
+.score > b {
+  font: 650 16px var(--font-number);
+}
+.stock-card > p {
+  min-height: 64px;
+  font-size: 15px;
+  line-height: 1.85;
+}
+.stock-card > footer {
+  font-size: 13px;
+}
+
+.industry-tabs {
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.industry-tabs button {
+  min-width: 124px;
+  padding: 12px 16px;
+  border-radius: 11px;
+  font-size: 15px;
+}
+.industry-tabs span {
+  font-size: 12px;
+}
+.news-lens-tabs {
+  gap: 9px;
+  margin-bottom: 20px;
+}
+.news-lens-tabs > span {
+  font-size: 14px;
+}
+.news-lens-tabs button {
+  padding: 8px 12px;
+  font-size: 14px;
+}
+.news-lens-tabs button small {
+  font-size: 12px;
+}
+.news-layout {
+  grid-template-columns: minmax(0, 1fr) 310px;
+  gap: 22px;
+}
+.news-feed {
+  gap: 16px;
+}
+.news-card {
+  grid-template-columns: 42px 1fr;
+  gap: 18px;
+  padding: 26px;
+  border-radius: var(--ui-radius);
+  box-shadow: var(--ui-shadow);
+}
+.news-index {
+  font: 650 15px var(--font-number);
+}
+.news-meta {
+  gap: 11px;
+}
+.news-meta b,
+.news-meta time {
+  font-size: 13px;
+}
+.news-meta em {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+.news-card h3 {
+  margin: 12px 0 10px;
+  font: 650 22px/1.55 var(--font-display);
+  letter-spacing: -0.012em;
+}
+.news-card p {
+  font-size: 15px;
+  line-height: 1.9;
+}
+.news-card footer {
+  margin-top: 16px;
+  font-size: 13px;
+}
+.signal-card {
+  top: 100px;
+  padding: 28px;
+}
+.signal-card > small {
+  font: 650 12px var(--font-number);
+}
+.signal-card h3 {
+  margin: 11px 0 24px;
+  font-size: 20px;
+}
+.signal-card > div {
+  grid-template-columns: 30px 1fr;
+  gap: 11px;
+  padding: 17px 0;
+}
+.signal-card > div > span {
+  font: 650 13px var(--font-number);
+}
+.signal-card p {
+  font-size: 14px;
+  line-height: 1.75;
+}
+.signal-card p b {
+  font-size: 15px;
+}
+.signal-card blockquote {
+  padding: 17px;
+  font: 500 15px/1.85 var(--font-display);
+}
+
+.modal {
+  width: min(520px, 100%);
+  padding: 30px;
+  border-radius: 18px;
+}
+.modal-head small {
+  font-size: 12px;
+}
+.modal-head h2 {
+  font: 650 28px var(--font-display);
+}
+.modal label {
+  font-size: 14px;
+}
+.modal input,
+.modal select,
+.modal textarea {
+  padding: 13px 14px;
+  font-size: 15px;
+}
+.submit,
+.ai-hint {
+  font-size: 15px;
+}
+.toast,
+.toast b,
+.toast button {
+  font-size: 14px;
+}
+.knowledge-detail {
+  width: min(1180px, 100%);
+  height: min(840px, calc(100vh - 36px));
+  border-radius: 18px;
+}
+.detail-header {
+  flex-basis: 74px;
+  padding: 0 30px;
+}
+.detail-brand span {
+  font-size: 13px;
+}
+.detail-brand b {
+  font-size: 16px;
+}
+.detail-header button {
+  font-size: 13px;
+}
+.detail-path {
+  max-width: 1040px;
+  font-size: 13px;
+}
+.detail-intro {
+  max-width: 1040px;
+  padding: 32px 28px 36px;
+}
+.detail-intro > small {
+  font-size: 12px;
+}
+.detail-intro h1 {
+  max-width: 860px;
+  font: 650 36px/1.4 var(--font-display);
+}
+.detail-intro > p {
+  max-width: 880px;
+  font-size: 16px;
+  line-height: 2;
+}
+.detail-intro > div span {
+  font-size: 13px;
+}
+.detail-layout {
+  max-width: 1040px;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: 44px;
+  padding: 38px 28px 76px;
+}
+.section-number {
+  font: 650 14px var(--font-number);
+}
+.detail-main h2 {
+  font-size: 21px;
+}
+.section-lead {
+  font-size: 14px;
+}
+.key-points p,
+.original-content {
+  font-size: 15px;
+  line-height: 1.95;
+}
+.method-steps p,
+.principle-grid p,
+.method-compare > article > p,
+.method-compare footer,
+.learning-path p,
+.boundary-list li,
+.learning-objectives li,
+.engineering-checklist li {
+  font-size: 14px;
+  line-height: 1.8;
+}
+.method-steps span,
+.principle-grid h3,
+.method-compare h3,
+.theory-grid h3 {
+  font-size: 15px;
+}
+.detail-main blockquote {
+  font: 500 17px/1.9 var(--font-display);
+}
+.takeaway span,
+.beginner-card span,
+.knowledge-example span,
+.verification-box span {
+  font-size: 12px;
+}
+.takeaway b,
+.beginner-card p,
+.knowledge-example p,
+.verification-box p {
+  font-size: 15px;
+}
+.detail-aside small {
+  font-size: 12px;
+}
+.detail-aside b {
+  font-size: 15px;
+}
+.detail-aside p,
+.related-topics span {
+  font-size: 13px;
+}
+.theory-grid p,
+.equation-card > p,
+.worked-example > ol p {
+  font-size: 14px;
+}
+.equation-formula {
+  font-size: 18px;
+}
+.equation-meta b,
+.worked-example > header span,
+.example-given b,
+.worked-example footer b {
+  font-size: 12px;
+}
+.equation-meta ul,
+.example-given li {
+  font-size: 13px;
+}
+.evidence-list small,
+.evidence-list a > b {
+  font-size: 12px;
+}
+.evidence-list h3 {
+  font-size: 15px;
+}
+.evidence-list p,
+.evidence-verdict > div p,
+.evidence-verdict > p {
+  font-size: 13px;
+}
+.principle-visual {
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 12% 0%, var(--gold-soft), transparent 35%),
+    var(--surface-2);
+}
+.principle-visual > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.principle-visual > header small {
+  color: var(--gold);
+  font: 650 11px var(--font-number);
+  letter-spacing: 1.5px;
+}
+.principle-visual > header h3 {
+  margin: 6px 0 0;
+  font-size: 17px;
+}

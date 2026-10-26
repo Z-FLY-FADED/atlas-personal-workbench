@@ -43,8 +43,10 @@ next-env.d.ts
 /.wrangler/
 /.runtime/
 /outputs/
+/output/
 /work/
 /release/
+/.openai/hosting.json
 
 # local/private materials
 /private/

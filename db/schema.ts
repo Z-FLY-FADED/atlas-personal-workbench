@@ -14,7 +14,45 @@ export const tasks = sqliteTable("tasks", {
   completionHistory: text("completion_history").notNull().default("[]"),
   activeOn: text("active_on").notNull().default(""),
   projectId: integer("project_id"),
-}, (table) => [index("tasks_owner_idx").on(table.ownerId)]);
+  repeatRule: text("repeat_rule").notNull().default("none"),
+  recurrenceKey: text("recurrence_key"),
+}, (table) => [index("tasks_owner_idx").on(table.ownerId), uniqueIndex("tasks_owner_recurrence_idx").on(table.ownerId, table.recurrenceKey)]);
+
+export const taskSubtasks = sqliteTable("task_subtasks", {
+  id: text("id").primaryKey(), ownerId: text("owner_id").notNull(), taskId: integer("task_id").notNull(),
+  title: text("title").notNull(), done: integer("done").notNull().default(0),
+  position: integer("position").notNull().default(0), archived: integer("archived").notNull().default(0),
+}, table => [uniqueIndex("subtasks_owner_task_position_idx").on(table.ownerId, table.taskId, table.position)]);
+
+export const focusSessions = sqliteTable("focus_sessions", {
+  id: text("id").primaryKey(), ownerId: text("owner_id").notNull(), taskId: integer("task_id"),
+  taskTitle: text("task_title").notNull().default(""), seconds: integer("seconds").notNull(), completedAt: text("completed_at").notNull(),
+}, table => [index("focus_owner_task_idx").on(table.ownerId, table.taskId)]);
+
+export const projectKnowledge = sqliteTable("project_knowledge", {
+  id: text("id").primaryKey(), ownerId: text("owner_id").notNull(), projectId: integer("project_id").notNull(),
+  knowledgeKey: text("knowledge_key").notNull(), title: text("title").notNull(), source: text("source").notNull().default(""),
+}, table => [uniqueIndex("project_knowledge_owner_key_idx").on(table.ownerId, table.projectId, table.knowledgeKey)]);
+
+export const resumeVersions = sqliteTable("resume_versions", {
+  id: text("id").primaryKey(), ownerId: text("owner_id").notNull(), title: text("title").notNull(),
+  company: text("company").notNull().default(""), role: text("role").notNull().default(""), content: text("content").notNull(),
+  sourceContent: text("source_content").notNull().default(""), changeNote: text("change_note").notNull().default(""),
+  revision: integer("revision").notNull().default(1), archived: integer("archived").notNull().default(0),
+  createdAt: text("created_at").notNull(), updatedAt: text("updated_at").notNull(),
+}, table => [index("resume_versions_owner_idx").on(table.ownerId)]);
+
+export const applicationResumeLinks = sqliteTable("application_resume_links", {
+  id: text("id").primaryKey(), ownerId: text("owner_id").notNull(), applicationId: integer("application_id").notNull(),
+  versionId: text("version_id").notNull(), versionRevision: integer("version_revision").notNull(),
+  title: text("title").notNull(), contentSnapshot: text("content_snapshot").notNull(), linkedAt: text("linked_at").notNull(),
+}, table => [uniqueIndex("application_resume_owner_idx").on(table.ownerId, table.applicationId)]);
+
+export const careerAttachments = sqliteTable("career_attachments", {
+  id: text("id").primaryKey(), ownerId: text("owner_id").notNull(), versionId: text("version_id").notNull(),
+  fileName: text("file_name").notNull(), mimeType: text("mime_type").notNull(), size: integer("size").notNull(),
+  dataBase64: text("data_base64").notNull(), archived: integer("archived").notNull().default(0), createdAt: text("created_at").notNull(),
+}, table => [index("career_attachments_owner_idx").on(table.ownerId, table.versionId)]);
 
 export const projects = sqliteTable("projects", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -25,6 +63,9 @@ export const projects = sqliteTable("projects", {
   progress: integer("progress").notNull().default(0),
   nextMilestone: text("next_milestone").notNull().default("确定下一里程碑"),
   dueDate: text("due_date").notNull().default("待安排"),
+  startDate: text("start_date").notNull().default(""),
+  milestoneDate: text("milestone_date").notNull().default(""),
+  progressMode: text("progress_mode").notNull().default("manual"),
   remainingTasks: integer("remaining_tasks").notNull().default(0),
   accent: text("accent").notNull().default("#a97d30"),
   createdAt: text("created_at").notNull().default(""),
@@ -70,7 +111,8 @@ export const knowledge = sqliteTable("knowledge", {
   keywords: text("keywords").notNull().default("[]"),
   relatedIds: text("related_ids").notNull().default("[]"),
   relatedTopics: text("related_topics").notNull().default("[]"),
-}, (table) => [index("knowledge_owner_idx").on(table.ownerId)]);
+  captureKey: text("capture_key"),
+}, (table) => [index("knowledge_owner_idx").on(table.ownerId), uniqueIndex("knowledge_owner_capture_idx").on(table.ownerId, table.captureKey)]);
 
 export const applications = sqliteTable("applications", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -305,3 +347,31 @@ export const watchlistItems = sqliteTable("watchlist_items", {
   uniqueIndex("idx_watchlist_items_owner_instrument").on(table.ownerId, table.instrumentId),
   index("idx_watchlist_items_watchlist_added").on(table.watchlistId, table.addedAt),
 ]);
+
+export const knowledgePreferences = sqliteTable("knowledge_preferences", { ownerId: text("owner_id").notNull(), knowledgeKey: text("knowledge_key").notNull(), primaryCategory: text("primary_category").notNull().default(""), secondaryCategory: text("secondary_category").notNull().default(""), cover: text("cover").notNull().default("auto") }, table => [uniqueIndex("knowledge_preferences_owner_key").on(table.ownerId, table.knowledgeKey)]);
+
+export const weeklyReviews = sqliteTable('weekly_reviews', {
+  id: text('id').primaryKey(), ownerId: text('owner_id').notNull(), weekStart: text('week_start').notNull(),
+  content: text('content').notNull(), snapshot: text('snapshot').notNull().default('{}'),
+  revision: integer('revision').notNull().default(1), updatedAt: text('updated_at').notNull(),
+}, table => [uniqueIndex('weekly_reviews_owner_week').on(table.ownerId, table.weekStart)]);
+
+export const workspaceSettings = sqliteTable('workspace_settings', {
+  id: text('id').primaryKey(), ownerId: text('owner_id').notNull(), key: text('key').notNull(), value: text('value').notNull(),
+}, table => [uniqueIndex('workspace_settings_owner_key').on(table.ownerId, table.key)]);
+
+export const recycledRecords = sqliteTable('recycled_records', {
+  id: text('id').primaryKey(), ownerId: text('owner_id').notNull(), entity: text('entity').notNull(), entityId: integer('entity_id').notNull(),
+  payload: text('payload').notNull(), deletedAt: text('deleted_at').notNull(),
+}, table => [uniqueIndex('recycled_records_owner_entity').on(table.ownerId, table.entity, table.entityId)]);
+
+export const learningCards = sqliteTable('learning_cards', {
+  id: text('id').primaryKey(), ownerId: text('owner_id').notNull(), language: text('language').notNull(),
+  front: text('front').notNull(), back: text('back').notNull(), sourceKey: text('source_key').notNull().default(''),
+  card: text('card').notNull(), dueAt: text('due_at').notNull(), revision: integer('revision').notNull().default(0), updatedAt: text('updated_at').notNull(),
+}, table => [uniqueIndex('learning_cards_owner_front_source').on(table.ownerId, table.language, table.front, table.sourceKey), index('learning_cards_owner_due').on(table.ownerId, table.dueAt)]);
+
+export const learningLogs = sqliteTable('learning_logs', {
+  id: text('id').primaryKey(), ownerId: text('owner_id').notNull(), cardId: text('card_id').notNull(),
+  rating: integer('rating').notNull(), reviewedAt: text('reviewed_at').notNull(), log: text('log').notNull(),
+}, table => [index('learning_logs_owner_card').on(table.ownerId, table.cardId)]);

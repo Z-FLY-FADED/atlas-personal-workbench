@@ -2,8 +2,8 @@
 const { app, BrowserWindow, dialog, shell } = require("electron");
 const { spawn } = require("node:child_process");
 const fs = require("node:fs");
-const http = require("node:http");
 const path = require("node:path");
+const { isWorkbenchReady: probeWorkbench, isWorkbenchURL } = require('./workbench-health.cjs');
 
 const PORT = Number(process.env.ATLAS_PORT || 3002);
 const APP_URL = `http://localhost:${PORT}/`;
@@ -66,20 +66,7 @@ function resolveProjectRoot() {
   return projectRoot;
 }
 
-function isWorkbenchReady(timeout = 1200) {
-  return new Promise((resolve) => {
-    const request = http.get(APP_URL, { timeout }, (response) => {
-      response.resume();
-      resolve(Boolean(response.statusCode && response.statusCode < 500));
-    });
-
-    request.on("timeout", () => {
-      request.destroy();
-      resolve(false);
-    });
-    request.on("error", () => resolve(false));
-  });
-}
+const isWorkbenchReady = () => probeWorkbench(APP_URL);
 
 async function waitForWorkbench(timeout = 50_000) {
   const deadline = Date.now() + timeout;
@@ -126,7 +113,7 @@ function startWorkbench(projectRoot) {
   return new Promise((resolve, reject) => {
     const child = spawn(
       nodePath,
-      [vinextCli, "dev", "--port", String(PORT)],
+      [vinextCli, "dev", "--port", String(PORT), "--strictPort"],
       {
         cwd: projectRoot,
         detached: false,
@@ -250,29 +237,29 @@ function createWindow() {
   mainWindow.loadFile(path.join(__dirname, "loading.html"));
   mainWindow.once("ready-to-show", () => mainWindow.show());
 
-  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    if (url.startsWith(APP_ORIGIN)) {
-      mainWindow.loadURL(url);
-    } else if (/^https?:\/\//i.test(url)) {
-      shell.openExternal(url);
-    }
-    return { action: "deny" };
-  });
-
-  mainWindow.webContents.on("will-navigate", (event, url) => {
-    const destination = new URL(url);
-    if (destination.protocol === "file:" || destination.protocol === "data:") {
-      return;
-    }
-
-    if (destination.origin !== APP_ORIGIN) {
-      event.preventDefault();
-      if (/^https?:\/\//i.test(url)) shell.openExternal(url);
-    }
-  });
+  configureNavigation(mainWindow);
 
   mainWindow.on("closed", () => {
     mainWindow = undefined;
+  });
+}
+
+function configureNavigation(window) {
+  window.webContents.setWindowOpenHandler(({ url }) => {
+    if (isWorkbenchURL(url, APP_ORIGIN)) {
+      return { action: 'allow', overrideBrowserWindowOptions: {
+        width: 1000, height: 800, autoHideMenuBar: true, icon: getWindowIcon(),
+        webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true, devTools: !app.isPackaged },
+      } };
+    }
+    if (/^https?:\/\//i.test(url)) void shell.openExternal(url);
+    return { action: 'deny' };
+  });
+  window.webContents.on('did-create-window', child => { child.setMenu(null); configureNavigation(child); });
+  window.webContents.on('will-navigate', (event, url) => {
+    if (isWorkbenchURL(url, APP_ORIGIN)) return;
+    event.preventDefault();
+    if (/^https?:\/\//i.test(url)) void shell.openExternal(url);
   });
 }
 

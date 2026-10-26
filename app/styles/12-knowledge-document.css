@@ -1,0 +1,963 @@
+/* Contextual diagrams and compact knowledge metadata */
+.detail-layout {
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: 40px;
+}
+.compact-detail-aside {
+  padding: 16px;
+}
+.compact-detail-aside > div {
+  margin-bottom: 13px;
+  padding-bottom: 13px;
+}
+.compact-detail-aside > div:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.compact-detail-aside small {
+  margin-bottom: 7px;
+  font-size: 12px;
+}
+.compact-detail-aside .quality-audit > b {
+  font: 700 26px/1.2 var(--font-number) !important;
+}
+.compact-detail-aside .quality-audit > span,
+.compact-detail-aside > div > span {
+  display: block;
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.compact-knowledge-path p {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+}
+.compact-knowledge-path p i {
+  width: auto;
+  height: auto;
+  margin: 0;
+  color: var(--gold);
+  background: none;
+  font-style: normal;
+}
+
+.knowledge-structure-figure,
+.code-flow-figure {
+  margin: 18px 0 14px;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, var(--gold-soft), transparent 42%), var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+.knowledge-structure-figure > header,
+.code-flow-figure > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 17px 19px;
+  border-bottom: 1px solid var(--border);
+}
+.knowledge-structure-figure header small,
+.code-flow-figure header small {
+  color: var(--gold);
+  font: 700 11px var(--font-number);
+  letter-spacing: 1.4px;
+}
+.knowledge-structure-figure header h3,
+.code-flow-figure header h3 {
+  margin: 5px 0 0;
+  font-size: 18px;
+  line-height: 1.45;
+}
+.knowledge-structure-figure > header > span {
+  padding: 5px 8px;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.knowledge-structure-chain,
+.code-flow-figure > div {
+  display: flex;
+  align-items: stretch;
+  padding: 20px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.structure-node-wrap,
+.code-flow-step {
+  min-width: 165px;
+  display: flex;
+  flex: 1 0 0;
+  align-items: center;
+}
+.structure-node-wrap > article {
+  min-height: 116px;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 11px;
+  flex: 1;
+  align-items: start;
+  padding: 15px;
+  background: color-mix(in srgb, var(--surface) 92%, var(--gold-soft));
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  box-shadow: 0 7px 18px rgba(35, 31, 24, 0.05);
+}
+.structure-node-wrap article > span {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  color: var(--gold-light);
+  background: var(--gold-soft);
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  font: 700 14px var(--font-number);
+}
+.structure-node-wrap b,
+.code-flow-step b {
+  display: block;
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.structure-node-wrap p,
+.code-flow-step p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+.structure-node-wrap > i,
+.code-flow-step > i {
+  flex: 0 0 28px;
+  color: var(--gold);
+  font: 700 18px var(--font-number);
+  text-align: center;
+}
+.knowledge-structure-figure figcaption,
+.code-flow-figure figcaption {
+  padding: 12px 19px;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.code-flow-figure {
+  background:
+    linear-gradient(135deg, rgba(70, 132, 148, 0.1), transparent 46%),
+    var(--surface-2);
+}
+.code-flow-figure > header {
+  display: block;
+}
+.code-flow-step {
+  min-width: 180px;
+}
+.code-flow-step > article {
+  min-height: 112px;
+  display: grid;
+  grid-template-columns: 29px minmax(0, 1fr);
+  column-gap: 9px;
+  flex: 1;
+  align-content: start;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+}
+.code-flow-step article > span {
+  width: 27px;
+  height: 27px;
+  display: grid;
+  grid-row: 1 / 3;
+  place-items: center;
+  color: #fff;
+  background: color-mix(in srgb, var(--gold) 80%, #3f7180);
+  border-radius: 8px;
+  font: 700 12px var(--font-number);
+}
+
+@media (max-width: 760px) {
+  .detail-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .knowledge-structure-figure > header {
+    flex-direction: column;
+  }
+  .knowledge-structure-chain,
+  .code-flow-figure > div {
+    padding: 14px;
+  }
+  .structure-node-wrap {
+    min-width: 150px;
+  }
+  .code-flow-step {
+    min-width: 165px;
+  }
+  .compact-detail-aside {
+    position: static;
+  }
+}
+
+/* Document-to-knowledge workflow */
+.knowledge-title-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.knowledge-title-actions .secondary-action {
+  min-height: 42px;
+  padding: 0 16px;
+}
+.document-modal {
+  width: min(720px, calc(100vw - 28px));
+  max-height: min(92dvh, 900px);
+  overflow-y: auto;
+}
+.document-upload {
+  margin-top: 18px;
+}
+.document-summary-preview {
+  margin: 12px 0;
+  overflow: hidden;
+  background:
+    linear-gradient(125deg, var(--gold-soft), transparent 58%), var(--surface-2);
+  border: 1px solid var(--border-strong);
+  border-radius: 12px;
+}
+.document-summary-preview > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.document-summary-preview header small,
+.document-summary-preview header b {
+  display: block;
+}
+.document-summary-preview header small {
+  color: var(--muted-2);
+  font-size: 11px;
+}
+.document-summary-preview header b {
+  margin-top: 5px;
+  color: var(--text);
+  font-size: 15px;
+}
+.document-summary-preview header b i {
+  color: var(--gold);
+  font-style: normal;
+}
+.document-summary-preview header > span {
+  padding: 5px 8px;
+  color: #4f8b64;
+  background: rgba(78, 147, 101, 0.1);
+  border-radius: 6px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.document-summary-preview > p {
+  margin: 0;
+  padding: 16px;
+  color: var(--text);
+  font: 500 16px/1.9 var(--font-display);
+}
+.document-summary-preview > footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+}
+.document-content-preview textarea {
+  min-height: 140px;
+  font-size: 13px;
+  line-height: 1.75;
+  resize: vertical;
+}
+.document-privacy-note {
+  margin: -2px 0 14px;
+  color: var(--muted-2);
+  font-size: 11px;
+  line-height: 1.6;
+}
+.document-empty-guide {
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  gap: 10px 12px;
+  margin: 14px 0 18px;
+  padding: 15px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+}
+.document-empty-guide > span {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  color: var(--gold);
+  background: var(--gold-soft);
+  border-radius: 50%;
+  font: 700 11px var(--font-number);
+}
+.document-empty-guide p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+.document-empty-guide b {
+  display: block;
+  color: var(--text);
+  font-size: 13px;
+}
+
+@media (max-width: 760px) {
+  .knowledge-title-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .knowledge-title-actions button {
+    width: 100%;
+  }
+  .document-modal {
+    width: 100%;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+  .document-summary-preview > header {
+    flex-direction: column;
+  }
+  .document-summary-preview > footer {
+    flex-direction: column;
+  }
+}
+
+/* Standard engineering mathematics */
+.equation-formula {
+  padding-top: 18px;
+  padding-bottom: 18px;
+  white-space: nowrap;
+}
+.equation-formula .katex-display {
+  margin: 0;
+  min-width: max-content;
+  overflow: visible;
+  text-align: left;
+}
+.equation-formula .katex-display > .katex {
+  color: inherit;
+  font-size: calc(1.18em + 2px);
+  text-align: left;
+}
+.equation-formula .katex .mord.mathnormal {
+  letter-spacing: 0.01em;
+}
+.equation-formula::-webkit-scrollbar {
+  height: 6px;
+}
+.equation-formula::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 6px;
+}
+
+@media (max-width: 760px) {
+  .equation-formula {
+    margin-right: 12px;
+    margin-left: 12px;
+    padding: 14px;
+  }
+  .equation-formula .katex-display > .katex {
+    font-size: calc(1.05em + 2px);
+  }
+}
+
+/* Textbook-style formula lessons: principle → derivation → engineering judgement */
+.formula-textbook-intro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0 18px;
+  padding: 13px 16px;
+  color: var(--muted);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--gold-soft) 72%, transparent),
+    var(--surface-2)
+  );
+  border: 1px solid var(--border-strong);
+  border-left: 3px solid var(--gold);
+  border-radius: 9px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.formula-textbook-intro strong {
+  color: var(--text);
+  margin-right: 3px;
+  font-size: 16px;
+}
+.formula-textbook-intro span {
+  padding: 3px 8px;
+  color: var(--gold-light);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+.formula-textbook-intro i {
+  color: var(--gold);
+  font-style: normal;
+}
+.equation-card > header {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+.equation-card > header > div small {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--gold);
+  font: 700 11px var(--font-number);
+  letter-spacing: 1.3px;
+}
+.formula-question {
+  margin: 0 16px 12px;
+  padding: 12px 14px;
+  background: color-mix(in srgb, var(--gold-soft) 55%, var(--surface-2));
+  border-left: 2px solid var(--gold-light);
+  border-radius: 0 8px 8px 0;
+}
+.formula-question b {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--text);
+  font-size: 15px;
+}
+.formula-question p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.8;
+}
+.formula-lesson {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 16px 13px;
+}
+.formula-lesson > article {
+  min-width: 0;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+.formula-lesson small {
+  color: var(--gold);
+  font: 700 11px var(--font-number);
+  letter-spacing: 1px;
+}
+.formula-lesson h4 {
+  margin: 6px 0 7px;
+  color: var(--text);
+  font-size: 17px;
+}
+.formula-lesson p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.85;
+}
+.formula-lesson ol {
+  display: grid;
+  gap: 7px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.formula-lesson li {
+  display: grid;
+  grid-template-columns: 25px 1fr;
+  gap: 7px;
+  align-items: start;
+}
+.formula-lesson li > span {
+  display: grid;
+  place-items: center;
+  width: 23px;
+  height: 23px;
+  color: var(--gold);
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  font: 700 11px var(--font-number);
+}
+.formula-lesson li p {
+  font-size: 14px;
+  line-height: 1.7;
+}
+.formula-check-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  margin: 0 16px 13px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.formula-check-grid > div {
+  padding: 12px 14px;
+  background: var(--surface-2);
+}
+.formula-check-grid b {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--gold);
+  font-size: 14px;
+}
+.formula-check-grid p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+@media (max-width: 900px) {
+  .formula-lesson {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 760px) {
+  .formula-textbook-intro {
+    gap: 5px;
+    padding: 11px 12px;
+    font-size: 14px;
+  }
+  .formula-textbook-intro strong {
+    width: 100%;
+    font-size: 15px;
+  }
+  .formula-question {
+    margin-right: 12px;
+    margin-left: 12px;
+  }
+  .formula-question p {
+    font-size: 15px;
+  }
+  .formula-lesson {
+    margin-right: 12px;
+    margin-left: 12px;
+  }
+  .formula-lesson > article {
+    padding: 12px;
+  }
+  .formula-check-grid {
+    grid-template-columns: 1fr;
+    margin-right: 12px;
+    margin-left: 12px;
+  }
+}
+
+/* Cleaner, more readable language-learning headers */
+.daily-language-mark h3 {
+  margin: 0 0 8px;
+  font-size: 24px;
+}
+.daily-language-mark p {
+  font-size: 16px;
+  line-height: 1.9;
+}
+.daily-vocabulary header h3,
+.daily-case-study header h3,
+.daily-output header h3 {
+  margin: 0 0 10px;
+  font-size: 26px;
+  line-height: 1.45;
+}
+.daily-vocabulary header p,
+.daily-case-study header p,
+.daily-output header p {
+  max-width: 900px;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.9;
+}
+
+@media (max-width: 760px) {
+  .daily-language-mark h3 {
+    font-size: 22px;
+  }
+  .daily-language-mark p {
+    font-size: 15px;
+  }
+  .daily-vocabulary header h3,
+  .daily-case-study header h3,
+  .daily-output header h3 {
+    font-size: 23px;
+  }
+  .daily-vocabulary header p,
+  .daily-case-study header p,
+  .daily-output header p {
+    font-size: 16px;
+    line-height: 1.85;
+  }
+}
+
+/* Sidebar hierarchy: category headings must lead their child items */
+@media (min-width: 761px) {
+  .sidebar nav p {
+    margin: 24px 12px 11px;
+    font-size: 20px;
+    line-height: 1.35;
+    letter-spacing: 0.35px;
+  }
+  .sidebar nav p span {
+    color: var(--text);
+    font-weight: 800;
+  }
+  .sidebar nav p small {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+  }
+  .nav-subsection {
+    margin: 16px 12px 7px 43px;
+    color: var(--text);
+    font-size: 18px;
+    line-height: 1.4;
+    font-weight: 750;
+    letter-spacing: 0.2px;
+  }
+  .sidebar nav button {
+    font-size: 16px;
+  }
+  .nav-item-wrap.indent button {
+    font-size: 15px;
+  }
+}
+
+/* Knowledge pages show learning content only; metadata remains hidden */
+.knowledge-top .card-more {
+  margin-left: auto;
+}
+.detail-intro h1 {
+  margin-top: 0;
+}
+.detail-layout {
+  display: block;
+  grid-template-columns: none;
+}
+.detail-main {
+  width: 100%;
+}
+
+/* Textbook-style knowledge structure */
+.detail-intro .knowledge-abstract {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 24px 0 0;
+}
+.knowledge-abstract article {
+  min-width: 0;
+  padding: 16px 17px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--border-strong);
+  border-radius: 10px;
+}
+.knowledge-abstract article > span {
+  display: block;
+  margin: 0 0 8px;
+  padding: 0;
+  color: var(--gold);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+}
+.knowledge-abstract p {
+  margin: 0;
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.85;
+}
+.knowledge-reading-map {
+  margin-top: 22px;
+  padding: 18px;
+  background:
+    linear-gradient(120deg, var(--gold-soft), transparent 55%), var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.knowledge-reading-map > header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 13px;
+}
+.knowledge-reading-map > header small {
+  color: var(--gold);
+  font: 700 11px var(--font-number);
+  letter-spacing: 1.4px;
+}
+.knowledge-reading-map > header b {
+  font-size: 17px;
+}
+.knowledge-reading-map ol {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.knowledge-reading-map li > div {
+  height: 100%;
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  padding: 12px;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+}
+.knowledge-reading-map li span {
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 750;
+}
+.knowledge-reading-map li b {
+  font-size: 15px;
+  line-height: 1.45;
+}
+.knowledge-reading-map li small {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.detail-main > section:nth-child(1),
+.detail-main > section:nth-child(3),
+.detail-main > section:nth-child(6),
+.detail-main > section:has(.worked-example),
+.detail-main > section:has(.frontier-list) {
+  padding-top: 28px;
+  border-top: 3px solid var(--border-strong);
+}
+.detail-main > section:nth-child(1)::before,
+.detail-main > section:nth-child(3)::before,
+.detail-main > section:nth-child(6)::before,
+.detail-main > section:has(.worked-example)::before,
+.detail-main > section:has(.frontier-list)::before {
+  grid-column: 1/-1;
+  margin-bottom: -2px;
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+}
+.detail-main > section:nth-child(1)::before {
+  content: "第一篇 · 工程边界与物理基础";
+}
+.detail-main > section:nth-child(3)::before {
+  content: "第二篇 · 原理链与数学建模";
+}
+.detail-main > section:nth-child(6)::before {
+  content: "第三篇 · 方法选型与工程实现";
+}
+.detail-main > section:has(.worked-example)::before {
+  content: "第四篇 · 算例分析与验证闭环";
+}
+.detail-main > section:has(.frontier-list)::before {
+  content: "第五篇 · 结论、前沿与延伸";
+}
+
+@media (max-width: 900px) {
+  .detail-intro .knowledge-abstract {
+    grid-template-columns: 1fr;
+  }
+  .knowledge-reading-map ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 560px) {
+  .knowledge-reading-map {
+    padding: 14px;
+  }
+  .knowledge-reading-map ol {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Knowledge reading scale and topic-matched engineering illustrations */
+.detail-main {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+.detail-main > section > div:last-child {
+  min-width: 0;
+}
+.detail-main h2 {
+  font-size: 27px;
+  line-height: 1.45;
+  letter-spacing: -0.02em;
+}
+.section-lead {
+  max-width: 930px;
+  font-size: 18px;
+  line-height: 1.9;
+}
+.detail-main blockquote {
+  font-size: 19px;
+  line-height: 1.95;
+}
+.theory-grid h3,
+.principle-grid h3,
+.method-compare h3,
+.application-grid h3,
+.frontier-list h3,
+.reading-list h3 {
+  font-size: 19px;
+  line-height: 1.55;
+}
+.theory-grid p,
+.principle-grid p,
+.method-steps p,
+.method-compare > article > p,
+.method-compare footer,
+.learning-objectives li,
+.engineering-checklist li,
+.boundary-list li,
+.application-grid dd,
+.frontier-list > article > p,
+.frontier-list footer span,
+.reading-list p,
+.principle-caption,
+.principle-step article p,
+.equation-card > p,
+.worked-example > ol p,
+.worked-example > footer p,
+.verification-box p,
+.key-points p {
+  font-size: 17px;
+  line-height: 1.9;
+}
+.derivation-flow li {
+  grid-template-columns: 42px 1fr;
+  gap: 14px;
+  padding: 10px 0;
+}
+.derivation-flow::before {
+  left: 20px;
+}
+.derivation-flow span {
+  width: 41px;
+  height: 41px;
+  font-size: 13px;
+}
+.derivation-flow p {
+  padding: 13px 16px;
+  font-size: 17px;
+  line-height: 1.85;
+}
+.application-grid article {
+  padding: 18px;
+}
+.application-grid dt {
+  font-size: 14px;
+  letter-spacing: 0.04em;
+}
+.application-grid dd {
+  margin-top: 6px;
+}
+.application-grid footer span {
+  padding: 5px 8px;
+  font-size: 13px;
+}
+.method-compare header span,
+.frontier-list header > span,
+.reading-list header span {
+  font-size: 13px;
+}
+.subsection-title {
+  font-size: 18px;
+}
+.equation-card h3,
+.worked-example > header h3 {
+  font-size: 20px;
+}
+.equation-meta b,
+.worked-example > header span,
+.example-given b,
+.worked-example footer b {
+  font-size: 14px;
+}
+.equation-meta li,
+.example-given li {
+  font-size: 15px;
+  line-height: 1.7;
+}
+.structure-node-wrap p,
+.code-flow-step p {
+  font-size: 15px;
+  line-height: 1.75;
+}
+.structure-node-wrap b,
+.code-flow-step b {
+  font-size: 17px;
+}
+.knowledge-structure-figure figcaption,
+.code-flow-figure figcaption {
+  font-size: 15px;
+  line-height: 1.8;
+}
+.principle-step article {
+  min-height: 150px;
+}
+.principle-step article b {
+  font-size: 17px;
+}
+.code-example > p,
+.code-example li {
+  font-size: 16px;
+  line-height: 1.85;
+}
+.code-example pre {
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.engineering-topic-figure {
+  margin: 18px 0 20px;
+  overflow: hidden;
+  background:
+    linear-gradient(
+      140deg,
+      color-mix(in srgb, var(--gold-soft) 78%, transparent),
+      transparent 45%
+    ),
+    var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  box-shadow: 0 12px 28px rgba(35, 31, 24, 0.05);
+}

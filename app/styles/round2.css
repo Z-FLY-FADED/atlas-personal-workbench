@@ -1,0 +1,42 @@
+.round2-page { display: grid; gap: 20px; min-width: 0; }
+.round2-panel { padding: 24px; min-width: 0; margin-bottom: 20px; }
+.round2-panel h3 { margin: 0 0 8px; font-size: 19px; }
+.round2-panel p { color: var(--muted); line-height: 1.75; margin: 10px 0; font-size: 1rem; }
+.round2-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.round2-panel button, .round2-actions button, .task-backlog button { padding: 9px 14px; border: 1px solid var(--border-strong); border-radius: 10px; background: var(--surface-2); color: var(--text); cursor: pointer; }
+.round2-panel button.primary, .round2-actions button.primary { color: var(--accent-ink); background: var(--gold); }
+.round2-panel button:disabled, .round2-actions button:disabled { opacity: .5; cursor: default; }
+.round2-panel input:not([type=checkbox]), .round2-panel select, .round2-panel textarea, .round2-actions input, .round2-actions select { box-sizing: border-box; background: var(--surface); color: var(--text); border: 1px solid var(--border-strong); padding: 10px; border-radius: 8px; max-width: 100%; }
+.round2-panel textarea { display: block; width: 100%; resize: vertical; line-height: 1.8; font-size: 1rem; }
+.round2-panel label, .round2-actions label { display: grid; gap: 6px; font-size: .875rem; color: var(--muted); margin: 8px 0; }
+.round2-panel label:has(input[type=checkbox]) { display: flex; align-items: center; }
+.round2-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.round2-metrics article { padding: 22px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; }
+.round2-metrics strong { display: block; margin-top: 12px; font-size: 32px; font-weight: 500; }
+.round2-metrics small, .round2-hint { color: var(--muted); font-size: 13px; }
+.round2-panel header, .task-backlog article, .recycle-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.task-backlog article, .recycle-row { padding: 14px 0; border-bottom: 1px solid var(--border); }
+.task-backlog article small, .recycle-row small { display: block; color: var(--muted); margin-top: 5px; }
+.round2-panel details { margin-top: 18px; }
+.round2-panel summary { cursor: pointer; color: var(--gold); padding: 10px 0; }
+.round2-table-wrap { overflow: auto; margin: 16px 0; }
+.round2-table-wrap table { width: 100%; border-collapse: collapse; }
+.round2-table-wrap td, .round2-table-wrap th { text-align: left; padding: 10px; border-bottom: 1px solid var(--border); }
+.round2-status { overflow-wrap: anywhere; }
+.round2-panel, .round2-metrics article { overflow-wrap: anywhere; }
+.round2-actions > *, .task-backlog article > *, .recycle-row > * { min-width: 0; max-width: 100%; }
+.task-backlog article > :first-child, .recycle-row > :first-child { flex: 1; }
+.task-backlog .round2-actions { flex-shrink: 0; }
+.round2-panel button, .round2-actions button { max-width: 100%; white-space: normal; line-height: 1.5; }
+.review-answer { overflow-wrap: anywhere; }
+@media (max-width: 1000px) { .task-backlog article { flex-wrap: wrap; }.task-backlog article > :first-child { flex-basis: 100%; } }
+.spaced-review-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.spaced-review-heading h3 { margin: 0; line-height: 1.5; }
+.spaced-review-heading button { flex-shrink: 0; }
+.spaced-review .spaced-review-error { color: var(--danger, #b34040); overflow-wrap: anywhere; }
+.review-flashcard { text-align: center; background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; padding: 28px 20px; margin: 18px 0; }
+.review-flashcard h2 { margin: 20px 0; font-size: 26px; overflow-wrap: anywhere; }
+.review-answer { white-space: pre-wrap; line-height: 1.9; margin: 20px auto; max-width: 760px; }
+.review-ratings { display: flex; justify-content: center; gap: 12px; margin-top: 22px; flex-wrap: wrap; }
+.career-coming-soon { opacity: .65; }
+@media (max-width: 700px) { .round2-panel { padding: 16px; } .round2-metrics { gap: 8px; } .round2-metrics article { padding: 14px; } .round2-metrics strong { font-size: 26px; } .round2-panel header, .task-backlog article, .recycle-row { align-items: flex-start; flex-direction: column; } .round2-actions { width: 100%; } }
