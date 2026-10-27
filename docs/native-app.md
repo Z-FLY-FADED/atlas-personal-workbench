@@ -89,9 +89,11 @@ node scripts/export-flutter-data.mjs --out .runtime/flutter-migration-new
 
 Windows 成功构建后将完整 Release 目录复制到 `release/flutter/windows/`，并生成 `WorkSpace-Windows-*.zip`；必须一起分发 DLL 和 `data/`。可执行文件为 `WorkSpace.exe`。此包没有商业代码签名，目标电脑需要所需的 Visual C++ 运行库。Android 成功构建后为 `release/flutter/WorkSpace-Android.apk`。
 
+给普通用户下载前，运行 `scripts/prepare-downloads.ps1` 核对构建清单，并加入已安装且签名有效的 MSVC x64 可再发行运行库。可通过 `-WindowsRuntimeDirectory` 指定授权的 `Microsoft.VC*.CRT` 目录。输出位于 `release/downloads/v版本号/`，包含完整 Windows ZIP、原签名 APK、使用说明和 SHA-256 清单；发布时上传到 GitHub Releases，不将本机配置、账号数据或签名私钥纳入附件。已准备的分发目录不会被脚本覆盖。
+
 Android 发布必须使用长期签名。`scripts/create-android-signing.ps1` 只在获得用户明确授权后执行；本轮已获得授权。签名为 `apps/atlas/android/atlas-release.jks`，密码配置为 `android/key.properties`，另有 `.runtime/signing-backup-*` 本地备份，均被 Git 忽略。请长期保留签名和密码，丢失后无法用同一签名覆盖更新。脚本拒绝覆盖已有密钥；Release 构建拒绝使用 Debug 签名回退。
 
-每次发布递增 `pubspec.yaml` 的版本与构建号，保留 Android 应用 ID 和签名，先执行检查与测试再构建。GitHub 推送不会使已安装的 App 自动更新。仓库中的 CI 配置提供检查和双平台构建入口，需要自行配置仓库的环境与签名 secrets；本轮未创建远程仓库或推送代码。
+每次发布递增 `pubspec.yaml` 的版本与构建号，保留 Android 应用 ID 和签名，先执行检查与测试再构建。GitHub 推送不会使已安装的 App 自动更新。仓库中的 CI 配置提供检查和双平台构建入口，需要自行配置仓库的环境与签名 secrets。当前源码已同步至 GitHub，供普通用户使用的成品包通过 Releases 单独分发。
 
 0.5.1 起应用名称统一为 WorkSpace。原始 Logo 位于 `assets/branding/workspace-logo.png`；运行 `scripts/generate-brand-assets.ps1` 可重新生成 Windows 多尺寸 ICO、Android 密度图标、自适应图标前景和启动画面。图标使用原书本与钢笔图案，配以米杏底色。Android 应用 ID `com.compus.atlas_workspace` 与 Dart 包名保持兼容。Windows 产品名变更会影响加密登录存储的目录，因此启动时会将原目录中的加密文件复制到新目录，已有新文件时不覆盖，原文件继续保留。
 

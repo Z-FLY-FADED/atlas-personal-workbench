@@ -24,5 +24,14 @@ const artifacts=artifactPaths.map(path=>({file:relative(root,path).replaceAll('\
 const version=readFileSync(join(app,'pubspec.yaml'),'utf8').match(/^version:\s*(.+)$/m)?.[1];
 const manifest={createdAt:new Date().toISOString(),version,platforms:['windows-x64','android'],sourceSha256,sourceFiles:inputs.length,artifacts,
   note:'Artifact checksums only. Test, cloud and physical-device verification must be recorded separately for each release.'};
-writeFileSync(join(output,'build-manifest.json'),JSON.stringify(manifest,null,2));
-console.log(JSON.stringify({version,sourceSha256,artifacts},null,2));
+const manifestPath=join(output,'build-manifest.json');
+if(process.argv.includes('--check')){
+  const recorded=JSON.parse(readFileSync(manifestPath,'utf8'));
+  if(recorded.version!==version||recorded.sourceSha256!==sourceSha256||JSON.stringify(recorded.artifacts)!==JSON.stringify(artifacts)){
+    throw new Error('Native inputs or artifacts changed. Rebuild and record the manifest before publishing.');
+  }
+  console.log(JSON.stringify({verified:true,version,sourceSha256,artifacts},null,2));
+}else{
+  writeFileSync(manifestPath,JSON.stringify(manifest,null,2));
+  console.log(JSON.stringify({version,sourceSha256,artifacts},null,2));
+}
