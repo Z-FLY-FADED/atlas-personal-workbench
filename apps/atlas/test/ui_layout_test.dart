@@ -19,6 +19,12 @@ import 'package:atlas_workspace/features/workspace/workspace_frame.dart';
 import 'package:atlas_workspace/shared/widgets/collection_page.dart';
 import 'auth_test.dart' show TestAuthService;
 import 'controller_test.dart' show FakeRepository;
+import 'package:http/testing.dart';
+import 'package:atlas_workspace/core/app_version.dart';
+import 'package:atlas_workspace/features/updates/update_page.dart';
+import 'package:atlas_workspace/features/updates/update_manifest.dart';
+import 'package:atlas_workspace/features/updates/update_service.dart';
+import 'helpers/update_fixture.dart';
 
 // Fixtures stay in the test runner; they are never uploaded or shipped in the app.
 FakeRepository previewRepository() => FakeRepository()
@@ -174,6 +180,55 @@ void main() {
           home: home,
         ),
       );
+
+  for (final (size, scale, name) in [
+    (const Size(1440, 1000), 1.0, 'updates-desktop'),
+    (const Size(390, 844), 1.0, 'updates-phone'),
+    (const Size(360, 800), 1.4, 'updates-large-text'),
+  ]) {
+    testWidgets('Update details and downloads fit $name', (tester) async {
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final key = GlobalKey();
+      final service = AppUpdateService(
+        client: MockClient((_) async => updateResponse(updateFixture())),
+      );
+      await tester.pumpWidget(
+        application(
+          key,
+          Scaffold(
+            body: AppUpdatePage(
+              service: service,
+              versionLoader: () async =>
+                  InstalledAppVersion(AppVersion.parse('0.5.2'), 9),
+              platform: size.width > 800
+                  ? UpdatePlatform.windows
+                  : UpdatePlatform.android,
+              openUrl: (_) async => true,
+              beforeDownload: () async => '已完成更新前加密备份，共 31 条记录。',
+              exportBackup: () async => true,
+            ),
+          ),
+          scale: scale,
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('检查更新'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('检查更新'));
+      await tester.pumpAndSettle();
+      expect(find.text('有新版本可以更新'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await capture(tester, key, name);
+      if (size.width < 800) {
+        await tester.ensureVisible(find.text('下载更新'));
+        await tester.pumpAndSettle();
+        await capture(tester, key, '$name-download');
+      }
+    });
+  }
 
   for (final (size, scale, name) in [
     (const Size(1440, 1000), 1.0, 'dashboard-desktop'),

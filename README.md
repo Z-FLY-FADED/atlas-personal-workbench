@@ -1,6 +1,8 @@
 # WorkSpace 个人工作台 · Windows / Android
 
-直接使用请前往 [公开测试版下载页](https://github.com/Z-FLY-FADED/atlas-personal-workbench/releases/tag/v0.5.1)，在 Assets 中下载 Windows 完整 ZIP 或 Android APK，无需编译源码。Windows 解压后运行 `WorkSpace.exe`；Android 安装 APK。每人可用自己的用户名和密码注册，云端数据按账号隔离。详见 [下载与使用](docs/download-and-use.md)。
+0.5.2 为已安装用户加入“关于与更新”，支持检查后续版本、查看说明并下载对应平台的新包。下载前先同步并创建本机加密备份，兼容性异常或备份失败时暂停下载。后续发布只需公开新安装包并更新版本清单，维护流程见 [用户更新接口](docs/app-updates.md)。
+
+直接使用请前往 [公开测试版下载页](https://github.com/Z-FLY-FADED/atlas-personal-workbench/releases/tag/v0.5.2)，在 Assets 中下载 Windows 完整 ZIP 或 Android APK，无需编译源码。Windows 解压后运行 `WorkSpace.exe`；Android 安装 APK。每人可用自己的用户名和密码注册，云端数据按账号隔离。详见 [下载与使用](docs/download-and-use.md)。
 
 主应用已改为 `apps/atlas` 中的 Flutter + Dart 工程，两端直接连接 Supabase Auth、PostgreSQL 与 Realtime，不依赖这台电脑运行本地服务。原 React/Electron 工作台保留在根目录，供迁移核对和暂未替代的专用流程使用。
 

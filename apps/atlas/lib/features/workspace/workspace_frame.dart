@@ -24,6 +24,7 @@ const workspaceNavigation = [
   ('ai', 'AI 助手', Icons.auto_awesome_outlined, '探索与工具'),
   ('profiles', '个人设置', Icons.tune_outlined, '设置'),
   ('data', '数据与恢复', Icons.cloud_sync_outlined, '设置'),
+  ('updates', '关于与更新', Icons.system_update_alt_rounded, '设置'),
 ];
 
 class WorkspaceFrame extends StatelessWidget {
@@ -515,7 +516,7 @@ class WorkspaceFrame extends StatelessWidget {
               Row(
                 children: [
                   for (final item in workspaceNavigation.where(
-                    (e) => e.$4 == '设置',
+                    (e) => e.$4 == '设置' && e.$1 != 'updates',
                   ))
                     Expanded(
                       child: TextButton.icon(
@@ -534,6 +535,20 @@ class WorkspaceFrame extends StatelessWidget {
                       ),
                     ),
                 ],
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: TextButton.icon(
+                  onPressed: () => navigate('updates'),
+                  icon: const Icon(Icons.system_update_alt_rounded, size: 15),
+                  label: const Text('关于与更新', style: TextStyle(fontSize: 11)),
+                  style: TextButton.styleFrom(
+                    foregroundColor: page == 'updates'
+                        ? AtlasColors.gold
+                        : AtlasColors.muted,
+                    visualDensity: VisualDensity.compact,
+                  ),
+                ),
               ),
               const SizedBox(height: 7),
               Row(

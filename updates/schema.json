@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "WorkSpace public update manifest v1",
+  "type": "object",
+  "required": ["schemaVersion", "channel", "version", "buildNumber", "publishedAt", "notes", "releaseUrl", "platforms", "dataCompatibility"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "channel": {"enum": ["preview", "stable"]},
+    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "buildNumber": {"type": "integer", "minimum": 1},
+    "publishedAt": {"type": "string", "format": "date-time"},
+    "notes": {"type": "string", "minLength": 1, "maxLength": 8000},
+    "releaseUrl": {"type": "string", "format": "uri", "pattern": "^https://github\\.com/"},
+    "dataCompatibility": {
+      "type": "object",
+      "required": ["dataSchema", "backendSha256", "androidApplicationId", "androidSigningSha256", "windowsProductName", "windowsCompanyName"],
+      "properties": {
+        "dataSchema": {"const": 1},
+        "backendSha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "androidApplicationId": {"const": "com.compus.atlas_workspace"},
+        "androidSigningSha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "windowsProductName": {"const": "WorkSpace"},
+        "windowsCompanyName": {"const": "com.compus"}
+      }
+    },
+    "platforms": {
+      "type": "object",
+      "minProperties": 1,
+      "properties": {"windows": {"$ref": "#/$defs/asset"}, "android": {"$ref": "#/$defs/asset"}},
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "asset": {
+      "type": "object", "required": ["url", "sha256", "sizeBytes"],
+      "properties": {
+        "url": {"type": "string", "format": "uri", "pattern": "^https://github\\.com/"},
+        "sha256": {"type": "string", "pattern": "^[a-fA-F0-9]{64}$"},
+        "sizeBytes": {"type": "integer", "minimum": 1, "maximum": 5368709120}
+      }
+    }
+  }
+}

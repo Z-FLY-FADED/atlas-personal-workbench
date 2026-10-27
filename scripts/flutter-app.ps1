@@ -93,6 +93,9 @@ try{
       $zip=Join-Path $releaseRoot ('WorkSpace-Windows-'+(Get-Date -Format 'yyyyMMdd-HHmmss')+'.zip')
       Compress-Archive -LiteralPath (Get-ChildItem -LiteralPath $bundle | Select-Object -ExpandProperty FullName) -DestinationPath $zip
       $unpacked=Join-Path $releaseRoot 'windows'
+      if (Get-Process -Name WorkSpace -ErrorAction SilentlyContinue) {
+        throw "Windows ZIP is complete. Close WorkSpace before replacing the local runtime: $zip"
+      }
       New-Item -ItemType Directory -Path $unpacked -Force|Out-Null
       Get-ChildItem -LiteralPath $bundle|ForEach-Object{Copy-Item -LiteralPath $_.FullName -Destination $unpacked -Recurse -Force}
       Write-Output "Windows bundle: $zip"

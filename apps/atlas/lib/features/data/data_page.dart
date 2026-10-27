@@ -6,6 +6,7 @@ import '../workspace/catalog.dart';
 import '../workspace/workspace_controller.dart';
 import 'archive_service.dart';
 import 'archive_cipher.dart';
+import '../../core/app_version.dart';
 
 class DataPage extends StatefulWidget {
   const DataPage({super.key, required this.controller, required this.userId});
@@ -16,6 +17,13 @@ class DataPage extends StatefulWidget {
 }
 
 class _DataPageState extends State<DataPage> {
+  late final Future<InstalledAppVersion?> _version = () async {
+    try {
+      return await InstalledAppVersion.load();
+    } catch (_) {
+      return null;
+    }
+  }();
   final _password = TextEditingController();
   bool _busy = false;
   String? _status;
@@ -207,9 +215,12 @@ class _DataPageState extends State<DataPage> {
             ),
           ),
         const SizedBox(height: 12),
-        Text(
-          'WorkSpace 0.5.1 · Windows / Android · 共 ${c.all.length} 条记录',
-          style: Theme.of(context).textTheme.bodySmall,
+        FutureBuilder<InstalledAppVersion?>(
+          future: _version,
+          builder: (context, snapshot) => Text(
+            'WorkSpace${snapshot.data == null ? '' : ' ${snapshot.data!.version}'} · 共 ${c.all.length} 条记录',
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
         ),
       ],
     );

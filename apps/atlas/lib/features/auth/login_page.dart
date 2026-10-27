@@ -3,6 +3,7 @@ import '../../core/theme/atlas_theme.dart';
 import '../../shared/error_message.dart';
 import '../../shared/widgets/atlas_widgets.dart';
 import 'auth_service.dart';
+import '../updates/update_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, required this.auth});
@@ -245,6 +246,20 @@ class _LoginPageState extends State<LoginPage> {
                 _registering ? '只需用户名和密码。请记住这两个信息。' : '同一用户名可在电脑和手机登录，数据按账号隔离。',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 8),
+              TextButton(
+                onPressed: _busy
+                    ? null
+                    : () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => Scaffold(
+                            appBar: AppBar(title: const Text('WorkSpace')),
+                            body: const AppUpdatePage(),
+                          ),
+                        ),
+                      ),
+                child: const Text('关于与更新'),
               ),
             ],
           ),

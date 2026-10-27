@@ -13,6 +13,10 @@ import '../ai/ai_page.dart';
 import '../knowledge/knowledge_page.dart';
 import '../career/career_page.dart';
 import '../market/market_page.dart';
+import '../updates/update_page.dart';
+import '../updates/update_backup.dart';
+import '../../core/config/app_config.dart';
+import '../../shared/file_io.dart';
 import 'dashboard_page.dart';
 import 'workspace_controller.dart';
 import 'workspace_frame.dart';
@@ -29,6 +33,7 @@ class WorkspaceShell extends StatefulWidget {
 class _WorkspaceShellState extends State<WorkspaceShell>
     with WidgetsBindingObserver {
   late final WorkspaceController _controller;
+  late final UpdateProtection _updateProtection;
   String _page = 'home';
   @override
   void initState() {
@@ -36,6 +41,12 @@ class _WorkspaceShellState extends State<WorkspaceShell>
     WidgetsBinding.instance.addObserver(this);
     _controller = WorkspaceController(
       SupabaseWorkspaceRepository(widget.client, widget.userId),
+    );
+    _updateProtection = UpdateProtection(
+      _controller,
+      UpdateBackupStore(
+        scope: '${Uri.parse(AppConfig.environment.url).host}|${widget.userId}',
+      ),
     );
     unawaited(_controller.start());
   }
@@ -64,6 +75,22 @@ class _WorkspaceShellState extends State<WorkspaceShell>
   }
 
   void _navigate(String page) => setState(() => _page = page);
+  Future<String> _prepareUpdate() async {
+    final receipt = await _updateProtection.prepare();
+    return '已完成更新前加密备份，共 ${receipt.records} 条记录。';
+  }
+
+  Future<bool> _exportUpdateBackup() async {
+    await _updateProtection.prepare();
+    if (!mounted) return false;
+    final bytes = await _updateProtection.store.readLatest();
+    if (!mounted) return false;
+    return saveFile(
+      'WorkSpace-update-backup-${DateTime.now().millisecondsSinceEpoch}.json',
+      bytes,
+    );
+  }
+
   Widget _content() => switch (_page) {
     'knowledge' => KnowledgePage(controller: _controller),
     'home' => DashboardPage(
@@ -73,6 +100,10 @@ class _WorkspaceShellState extends State<WorkspaceShell>
       onNavigate: _navigate,
     ),
     'data' => DataPage(controller: _controller, userId: widget.userId),
+    'updates' => AppUpdatePage(
+      beforeDownload: _prepareUpdate,
+      exportBackup: _exportUpdateBackup,
+    ),
     'languages' => LanguageHubPage(
       controller: _controller,
       onNavigate: _navigate,

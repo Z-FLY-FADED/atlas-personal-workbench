@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "channel": "preview",
+  "version": "0.5.1",
+  "buildNumber": 8,
+  "publishedAt": "2026-10-27T02:38:38Z",
+  "notes": "WorkSpace 0.5.1：暖色界面、Know-how、语言学习与统一 Logo。",
+  "releaseUrl": "https://github.com/Z-FLY-FADED/atlas-personal-workbench/releases/tag/v0.5.1",
+  "platforms": {
+    "windows": {
+      "url": "https://github.com/Z-FLY-FADED/atlas-personal-workbench/releases/download/v0.5.1/WorkSpace-0.5.1-Windows-x64.zip",
+      "sha256": "d4ee84d8d41288e0b710c571f3046791161c668eb7abe16bac59d1910187e271",
+      "sizeBytes": 16170906
+    },
+    "android": {
+      "url": "https://github.com/Z-FLY-FADED/atlas-personal-workbench/releases/download/v0.5.1/WorkSpace-0.5.1-Android.apk",
+      "sha256": "65570c3c91f3191f4f156b47e3cc3e9976311179e73c401360583c220a12399c",
+      "sizeBytes": 64968099
+    }
+  },
+  "dataCompatibility": {
+    "dataSchema": 1,
+    "backendSha256": "ffb396e2dce8740bd228029e99a59182fea2d281dc9bdc8e7397859906084cdc",
+    "androidApplicationId": "com.compus.atlas_workspace",
+    "androidSigningSha256": "f08c5e9dae09c634aaf57cf441fbb1dee53e5840267369e87a2f9022c4aa85ad",
+    "windowsProductName": "WorkSpace",
+    "windowsCompanyName": "com.compus"
+  }
+}

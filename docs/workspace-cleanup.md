@@ -1,6 +1,6 @@
 # 工作台目录与清理说明
 
-主应用为 `apps/atlas` 中的 Flutter 工程，名称为 WorkSpace，当前版本 `0.5.1+8`。`release/flutter/windows/` 是本机可直接运行的完整 Windows 程序，必须保留其中的 DLL 和 `data/`；同目录下仅保留一份当前 Windows ZIP 分发包和 `WorkSpace-Android.apk`。
+主应用为 `apps/atlas` 中的 Flutter 工程，名称为 WorkSpace，当前版本 `0.5.2+9`。`release/flutter/windows/` 是本机可直接运行的完整 Windows 程序，必须保留其中的 DLL 和 `data/`；同目录下仅保留一份当前 Windows ZIP 分发包和 `WorkSpace-Android.apk`。
 
 `运行WorkSpace.cmd`、`启动工作台.vbs` 与桌面 WorkSpace 快捷方式均应打开 `release/flutter/windows/WorkSpace.exe`。`安装WorkSpace桌面版.cmd` 用于重新生成这个快捷方式。根目录的 `package.json`、React/Electron 源码与 Node 依赖继续保留，供兼容核对、旧数据导出及尚未替代的专用流程使用；它们不是当前桌面启动入口。
 

@@ -1,15 +1,12 @@
 import 'dart:io';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'legacy_session_migration.dart';
+import 'safe_secure_store.dart';
 
 class SecureSessionStorage extends LocalStorage {
   const SecureSessionStorage(this.namespace);
   final String namespace;
-  static const _storage = FlutterSecureStorage(
-    aOptions: AndroidOptions(encryptedSharedPreferences: true),
-  );
   String get _key => 'atlas.session.$namespace';
   @override
   Future<void> initialize() async {
@@ -19,12 +16,12 @@ class SecureSessionStorage extends LocalStorage {
   }
 
   @override
-  Future<bool> hasAccessToken() => _storage.containsKey(key: _key);
+  Future<bool> hasAccessToken() => SafeSecureStore.contains(_key);
   @override
-  Future<String?> accessToken() => _storage.read(key: _key);
+  Future<String?> accessToken() => SafeSecureStore.read(_key);
   @override
   Future<void> persistSession(String persistSessionString) =>
-      _storage.write(key: _key, value: persistSessionString);
+      SafeSecureStore.write(_key, persistSessionString);
   @override
-  Future<void> removePersistedSession() => _storage.delete(key: _key);
+  Future<void> removePersistedSession() => SafeSecureStore.delete(_key);
 }
