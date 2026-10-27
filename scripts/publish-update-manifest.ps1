@@ -12,7 +12,14 @@ $update = $text | ConvertFrom-Json
 if ($update.schemaVersion -ne 1 -or $update.version -ne $version -or $update.buildNumber -ne $buildNumber) { throw 'Update metadata does not match source version.' }
 if ($update.channel -notin @('preview','stable') -or $update.notes.Length -gt 8000 -or !$update.notes.Trim()) { throw 'Invalid update content.' }
 if ($update.releaseUrl -cne "https://github.com/$Repository/releases/tag/v$version") { throw 'Unexpected release URL.' }
-$release = Invoke-RestMethod -Uri "https://api.github.com/repos/$Repository/releases/tags/v$version" -Headers @{Accept='application/vnd.github+json';'User-Agent'='WorkSpace-release-validator'} -TimeoutSec 30
+$release = $null
+if (Get-Command gh -ErrorAction SilentlyContinue) {
+  $releaseText = & gh api "repos/$Repository/releases/tags/v$version"
+  if ($LASTEXITCODE -eq 0) { $release = $releaseText | ConvertFrom-Json }
+}
+if (!$release) {
+  $release = Invoke-RestMethod -Uri "https://api.github.com/repos/$Repository/releases/tags/v$version" -Headers @{Accept='application/vnd.github+json';'User-Agent'='WorkSpace-release-validator'} -TimeoutSec 30
+}
 if ($release.draft -or $release.tag_name -ne "v$version" -or !$release.published_at) { throw 'Release is not public. Leave the update endpoint unchanged.' }
 if (($update.channel -eq 'preview') -ne [bool]$release.prerelease) { throw 'Update channel and release visibility differ.' }
 foreach ($platform in @('windows','android')) {
