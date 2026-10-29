@@ -5,6 +5,7 @@
 A personal workspace for Windows and Android: tasks, private knowledge, language learning, job tracking, market research and optional AI assistance. Built with Flutter and Supabase. [English](README.en.md)
 
 [![Release](https://img.shields.io/github/v/release/Z-FLY-FADED/atlas-personal-workbench?include_prereleases&label=preview)](https://github.com/Z-FLY-FADED/atlas-personal-workbench/releases)
+[![Checks](https://github.com/Z-FLY-FADED/atlas-personal-workbench/actions/workflows/native-app.yml/badge.svg?branch=main)](https://github.com/Z-FLY-FADED/atlas-personal-workbench/actions/workflows/native-app.yml)
 [![Windows / Android](https://img.shields.io/badge/platform-Windows%20%7C%20Android-986047)](docs/download-and-use.md)
 [![Flutter](https://img.shields.io/badge/built%20with-Flutter-02569B?logo=flutter)](apps/atlas)
 [![Supabase](https://img.shields.io/badge/backend-Supabase-3FCF8E?logo=supabase)](supabase)

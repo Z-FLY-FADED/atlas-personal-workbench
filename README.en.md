@@ -4,6 +4,8 @@ A Flutter desktop and mobile app that brings tasks, private knowledge, language 
 
 **Windows + Android · Supabase backend · Optional bring-your-own AI API**
 
+[![Checks](https://github.com/Z-FLY-FADED/atlas-personal-workbench/actions/workflows/native-app.yml/badge.svg?branch=main)](https://github.com/Z-FLY-FADED/atlas-personal-workbench/actions/workflows/native-app.yml)
+
 [中文](README.md) · [Download v0.6.0 preview](https://github.com/Z-FLY-FADED/atlas-personal-workbench/releases/tag/v0.6.0) · [Release notes](docs/release-0.6.0.md) · [Report an issue](https://github.com/Z-FLY-FADED/atlas-personal-workbench/issues/new/choose)
 
 ![Desktop workspace with isolated demo data](docs/images/workspace-desktop.png)
