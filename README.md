@@ -1,169 +1,91 @@
-# WorkSpace 个人工作台 · Windows / Android
+# WorkSpace · 个人工作台
 
-0.5.2 为已安装用户加入“关于与更新”，支持检查后续版本、查看说明并下载对应平台的新包。下载前先同步并创建本机加密备份，兼容性异常或备份失败时暂停下载。后续发布只需公开新安装包并更新版本清单，维护流程见 [用户更新接口](docs/app-updates.md)。
+把任务、知识、学习与行业信息，放进同一个属于自己的工作空间。
 
-直接使用请前往 [公开测试版下载页](https://github.com/Z-FLY-FADED/atlas-personal-workbench/releases/tag/v0.5.2)，在 Assets 中下载 Windows 完整 ZIP 或 Android APK，无需编译源码。Windows 解压后运行 `WorkSpace.exe`；Android 安装 APK。每人可用自己的用户名和密码注册，云端数据按账号隔离。详见 [下载与使用](docs/download-and-use.md)。
+A personal workspace for Windows and Android: tasks, private knowledge, language learning, job tracking, market research and optional AI assistance. Built with Flutter and Supabase. [English](README.en.md)
 
-主应用已改为 `apps/atlas` 中的 Flutter + Dart 工程，两端直接连接 Supabase Auth、PostgreSQL 与 Realtime，不依赖这台电脑运行本地服务。原 React/Electron 工作台保留在根目录，供迁移核对和暂未替代的专用流程使用。
+[![Release](https://img.shields.io/github/v/release/Z-FLY-FADED/atlas-personal-workbench?include_prereleases&label=preview)](https://github.com/Z-FLY-FADED/atlas-personal-workbench/releases)
+[![Windows / Android](https://img.shields.io/badge/platform-Windows%20%7C%20Android-986047)](docs/download-and-use.md)
+[![Flutter](https://img.shields.io/badge/built%20with-Flutter-02569B?logo=flutter)](apps/atlas)
+[![Supabase](https://img.shields.io/badge/backend-Supabase-3FCF8E?logo=supabase)](supabase)
 
-双端启动、构建、旧数据迁移、签名保存与验收边界见 [双端应用说明](docs/native-app.md)。Windows 程序与 Android APK 的生成目录为 `release/flutter/`。
+**[下载 0.6.0 公开测试版](https://github.com/Z-FLY-FADED/atlas-personal-workbench/releases/tag/v0.6.0)** · [使用说明](docs/download-and-use.md) · [本次更新](docs/release-0.6.0.md) · [反馈问题](https://github.com/Z-FLY-FADED/atlas-personal-workbench/issues/new/choose)
 
-0.4.0 按功能重构为暖白、米杏与陶土色界面：首页围绕今日任务、专注与学习组织，任务使用待办清单，项目展示进度，笔记使用便笺，知识库采用图文书架，课程按词句与场景阅读排版。顶部支持搜索现有内容与功能，Windows 可用 Ctrl+K 打开。截图与验收记录见 `outputs/warm-ui-20261026/`。
+![WorkSpace 桌面工作台：任务、专注与学习入口](docs/images/workspace-desktop.png)
 
-0.4.1 将 Windows 原生标题栏统一为米杏底色、陶土图标与圆角窗口按钮，显示中文标题，并保留系统拖动、缩放、最小化、最大化/还原和关闭操作。发布包、原生窗口截图与验证记录见 `outputs/titlebar-20261026/`。
+## 可以做什么
 
-0.5.0 将知识库整理为 17 篇 Know-how 实操指南，包含技术链路图、68 个操作步骤、算例、验收标准和排错路径。英语与日语统一放入“学习与成长 → 语言学习”，放大侧栏分组标题并精简操作提示。修复日期筛选、重复任务、正文编辑、主简历重复导入、保存版本及网络异常后的显示问题；本轮通过 96 项隔离自动测试和 21 项原生窗口命令检查。具体范围及未实测项见 `outputs/knowhow-20261026/功能检查与修复报告.md`。
+| 场景 | 功能 |
+| --- | --- |
+| 计划与记录 | 今日工作台、任务、项目、笔记、提醒、专注与每周总结 |
+| 私人知识库 | 保存正文、来源和关联资料，阅读 Know-how 指南，将资讯沉淀成自己的知识 |
+| 语言学习 | 英语与日语课程、词句和场景练习 |
+| 求职管理 | 主简历、简历版本、投递记录、岗位目录与关键词匹配；组合筛选进展、公司、地点、学历等条件 |
+| 股票研究 | A 股、港股、美股目录与自选分组；筛选市场、行业、风险、行情、涨跌与价格；金十财经资讯 |
+| 行业速览 | 关注 AI、机器人、智能制造、新能源；区分科技公众号、大厂公众号、新闻频道、媒体与官网来源 |
+| 个人 AI | 添加兼容 Chat Completions 的 API 与模型，搜索当前账号资料、总结内容、预览并确认知识正文修改 |
+| 双端与更新 | Windows / Android 共用账号；服务器按账号隔离；更新前同步和创建本机加密备份 |
 
-0.5.1 使用用户提供的书本与钢笔 Logo，统一名称为 WorkSpace，更新应用内品牌、Windows 标题栏与程序图标、Android 桌面图标及启动画面。Windows 首次升级会保留并迁移原有加密登录存储；Android 沿用原应用 ID 和发布签名。品牌素材生成入口为 `scripts/generate-brand-assets.ps1`，原始透明 PNG 位于 `apps/atlas/assets/branding/workspace-logo.png`。验证范围见 [0.5.1 更新说明](docs/release-0.5.1.md)。
+AI 默认关闭，公开来源采集与规则筛选无需模型。个人知识、来源和 AI 记录保存在服务器，模型 API Key 在服务端加密，客户端不能读取密钥表。数据通过 Supabase Auth、RLS 与版本检查约束，详见 [架构与部署](docs/native-app.md) 和 [探索与 AI](docs/exploration-and-ai.md)。
 
-清理后的发布目录只保留当前版。双击 `运行WorkSpace.cmd` 或 `启动工作台.vbs` 可启动 Windows 原生应用；`安装WorkSpace桌面版.cmd` 更新桌面 WorkSpace 快捷方式。目录保留范围、历史资料位置与测试记录见 [清理后目录说明](docs/workspace-cleanup.md)。
+## 0.6.0 新增
+
+- **筛选更细**：投递记录、岗位与匹配、股票目录及自选均支持多条件组合，保留已有搜索与快捷标签。[筛选规则](docs/list-filters.md)
+- **资讯有来源**：RSS / Atom / JSON Feed、公开网页公告、JobPosting、金十和央视科技适配；记录原文、发布时间、采集结果和失败原因。
+- **公众号独立分类**：支持微信单篇公开正文提取及已授权订阅源接入；按方向、类别和近期时间筛选。[来源说明](docs/industry-sources.md)
+- **AI 用自己的接口**：多组 API 连接，账号内资料检索、总结与正文修改预览；确认保存时检查资料版本，避免覆盖其他设备的新修改。
+
+采集由用户点击“更新来源”触发，目前没有后台定时采集。网站登录、验证码、反爬和服务超时会影响可用性。公众号单篇链接不会自动发现新文章；持续更新需要接入自己授权的订阅服务。微信实测返回验证页时会记为失败，**尚未接通公众号最新推文的持续采集**。招聘来源入口不代表已经核实岗位开放状态，股票价格按原币展示。
+
+## 界面预览
+
+截图使用隔离测试数据，展示桌面和手机布局。
+
+| 岗位组合筛选 | 个人 AI 接口与资料操作 |
+| --- | --- |
+| <img src="docs/images/job-filters-mobile.png" alt="手机岗位筛选" width="320"> | <img src="docs/images/ai-assistant-mobile.png" alt="手机个人 AI 助手" width="320"> |
+
+![行业速览：关注方向、来源分类与近期时间筛选](docs/images/industry-sources.png)
+
+## 下载与开始使用
+
+在 [Releases](https://github.com/Z-FLY-FADED/atlas-personal-workbench/releases/tag/v0.6.0) 的 Assets 中选择安装包，普通使用者无需编译源码。
+
+| 平台 | 下载与运行 |
+| --- | --- |
+| Windows 10 / 11 x64 | [完整 ZIP](https://github.com/Z-FLY-FADED/atlas-personal-workbench/releases/download/v0.6.0/WorkSpace-0.6.0-Windows-x64.zip)，解压后运行 `WorkSpace.exe`，保留 DLL 和 `data/` |
+| Android | [签名 APK](https://github.com/Z-FLY-FADED/atlas-personal-workbench/releases/download/v0.6.0/WorkSpace-0.6.0-Android.apk)，通过系统安装流程安装；升级时覆盖安装 |
+
+首次注册自己的用户名与密码；在两个设备登录同一账号即可访问同一云端工作区。注册、登录和服务器保存需要联网。公开安装包连接维护者托管的 Supabase 项目，自部署可以配置自己的项目。已有 0.5.2 用户可在“关于与更新”中检查新版；更新会先同步并创建本机加密备份，仍建议保留独立导出。[更新与数据保护](docs/app-updates.md)
+
+当前为公开测试版：Windows 未做商业代码签名，Android 真机覆盖安装和双设备同步尚未完成实测。发布页附文件校验清单。详细范围见 [0.6.0 更新说明](docs/release-0.6.0.md)。
+
+## 从源码运行
+
+主应用使用 Flutter / Dart，服务端为 Supabase PostgreSQL、Realtime 与 Edge Functions。准备 Flutter 和对应平台工具链，将 `apps/atlas/config/example.json` 复制为同目录下的 `dev.json`，填写自己的 Supabase URL 与 **Publishable Key**。数据库迁移、函数和服务端密钥配置见 [双端应用说明](docs/native-app.md) 及 [探索与 AI 部署](docs/exploration-and-ai.md)。
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/flutter-app.ps1 -Action doctor
+powershell -ExecutionPolicy Bypass -File scripts/flutter-app.ps1 -Action get
 powershell -ExecutionPolicy Bypass -File scripts/flutter-app.ps1 -Action analyze
 powershell -ExecutionPolicy Bypass -File scripts/flutter-app.ps1 -Action test
-powershell -ExecutionPolicy Bypass -File scripts/flutter-app.ps1 -Action build-windows -Config prod
-powershell -ExecutionPolicy Bypass -File scripts/flutter-app.ps1 -Action build-apk -Config prod
+powershell -ExecutionPolicy Bypass -File scripts/flutter-app.ps1 -Action run-windows -Config dev
 ```
 
-以下保留旧版网站与 Electron 的说明。
-
-## 旧版个人工作台
-
-面向 PC、手机与平板的个人工作台网站。包含任务管理、知识库、三维知识关联图、语言学习、招聘与行业情报、统一股票研究工作台以及多模型配置等功能。股票模块将 A股、港股与美股集中到同一入口，提供跨市场筛选、研究信号拆解、数据来源状态和账户自选。行业情报模块支持 RSS/Atom 与 RSSHub 来源、增量采集、标题指纹去重、来源健康度、已读/重点状态及一键沉淀到知识库。
-
-## 项目结构
+Android 运行使用 `-Action run-android -Device <设备编号>`。发布构建使用 `-Action build-windows -Config prod` 和 `-Action build-apk -Config prod`，APK 需要本机长期签名。不要将服务端密钥、模型 API Key、签名文件或个人数据提交到仓库。
 
 ```text
-个人工作台/
-├─ app/                         # 前端页面、样式与服务端接口
-│  ├─ page.tsx                  # 路由入口，只装配工作台应用
-│  ├─ shell/                    # 页面外壳、导航、功能装配与视图入口
-│  ├─ contracts/                # 前后端共享的数据类型与备份格式
-│  ├─ features/                 # tasks / knowledge / learning / career / market 等功能
-│  │  └─ <feature>/             # domain、hooks、components、views，按功能维护
-│  ├─ shared/                   # HTTP、存储、下载、文档解析与通用组件
-│  ├─ server/                   # 服务端业务、查询、持久化与外部数据采集
-│  ├─ api/                      # HTTP 路由适配层，保留现有接口地址
-│  ├─ styles/                   # 按既有层叠顺序拆分的主题与模块样式
-│  └─ globals.css               # Tailwind 与有序样式导入入口
-├─ db/
-│  └─ schema.ts                 # D1 数据库结构定义
-├─ migrations/                  # 数据库迁移记录（按编号顺序执行）
-├─ worker/                      # Cloudflare Worker 类型与运行配置
-├─ public/                      # 网站静态资源
-├─ tests/                       # 自动化测试
-├─ .openai/hosting.example.json # 站点部署与 D1 绑定示例
-├─ package.json                 # 依赖与常用命令
-├─ pnpm-lock.yaml               # 部署使用的依赖锁定文件
-├─ vite.config.ts               # 本地开发与构建配置
-└─ drizzle.config.ts            # 数据库迁移生成配置
+apps/atlas/        Flutter Windows / Android 主应用
+supabase/         数据库迁移、账号隔离规则、采集与 AI 函数、服务端测试
+scripts/          开发、构建、签名校验与公开更新清单工具
+updates/          已安装用户读取的公开版本清单
+docs/             使用、部署、版本说明与界面截图
+app/ + desktop/   保留的 React / Electron 旧应用
 ```
 
-模块职责、依赖规则和后续扩展方式见 [架构说明](docs/architecture.md)。视图与弹窗按需加载；各功能保留自己的状态，切换页面时不会重新创建整个工作台。服务端工作台模块分别维护查询、修改、序列化和网页来源处理。
+旧版开发命令与 D1 架构保留在 [旧版工作台说明](docs/legacy-web.md)。
 
-## 核心数据流
+## 参与与反馈
 
-```text
-手动输入 / 网页地址 / 上传文档
-        ↓
-内容识别：标题、摘要、关键词、分类
-        ↓
-知识扩充：原理、公式、方法、参考资料
-        ↓
-D1 数据库：知识条目、主题、关联关系
-        ↓
-三维知识球：分类球 ← 主题球 ← 知识条目球
-```
+欢迎通过 [Issues](https://github.com/Z-FLY-FADED/atlas-personal-workbench/issues) 提交问题和具体使用场景，或阅读 [贡献指南](CONTRIBUTING.md) 后提交 PR。反馈时请附版本、平台和复现步骤，并移除个人资料与密钥。如果项目对你有帮助，欢迎 Star 或分享项目链接。
 
-行业情报数据流：
-
-```text
-官方 RSS/Atom / RSSHub
-        ↓
-条件请求：ETag、Last-Modified、失败退避
-        ↓
-URL 规范化 + 标题 SimHash 去重
-        ↓
-D1：来源、文章、采集运行、用户阅读动作
-        ↓
-行业情报收件箱 → 重点关注 / 忽略 / 存入知识库
-```
-
-## 本地运行（Windows）
-
-需要 Node.js 22.13 或更高版本。首次进入目录后执行：
-
-```powershell
-pnpm install
-pnpm dev
-```
-
-生产构建验证：
-
-```powershell
-pnpm build
-```
-
-重构后的完整检查：
-
-```powershell
-pnpm typecheck
-pnpm lint
-pnpm test
-pnpm build
-```
-
-`tests/architecture.test.ts` 检查运行时循环依赖，并阻止客户端代码引入服务端模块、Cloudflare 绑定和 Node 内置模块。
-
-在 Cloudflare Workers 本地运行时预览构建结果：
-
-```powershell
-pnpm start --port 3005 --strictPort
-```
-
-旧版网站使用 D1，生产预览通过 Vite 的 Cloudflare 插件运行。旧 Electron 源码的开发模式默认使用 3002 端口，检查 `/api/health` 后再打开页面。当前桌面入口已切换到 Flutter 原生应用，无需本地 HTTP 服务。
-
-数据库结构变更后生成迁移：
-
-```powershell
-pnpm db:generate
-```
-
-部署或首次运行前必须应用数据库迁移；运行时接口不会再重复建表：
-
-```powershell
-pnpm db:migrate:local
-pnpm db:migrate:remote
-```
-
-本地迁移可直接使用仓库内的 `wrangler.jsonc`。执行远程迁移前，必须把其中的占位 `database_id` 替换为目标 D1 数据库 ID；托管平台部署则应使用平台注入的实际绑定。
-
-## 密钥与生产安全
-
-- `.env.local` 只用于本地开发且不会进入 Git；不要同步、截图或备份该文件。
-- 生产密钥必须由部署环境注入，并且每个部署使用独立随机值：
-
-```powershell
-pnpm exec wrangler secret put AI_KEY_ENCRYPTION_SECRET
-pnpm exec wrangler secret put AI_SCHEDULER_SECRET
-```
-
-- 更换 `AI_KEY_ENCRYPTION_SECRET` 前先迁移或重新保存已加密的模型 API Key，否则旧数据无法解密。
-- `/api/ai` 的付费查询默认限制为每用户每分钟 10 次，可通过 `AI_QUERY_RATE_LIMIT_PER_MINUTE` 调整。
-- 生产请求缺少 `oai-authenticated-user-id` 时返回 401；仅 localhost 开发环境使用本地用户回退。
-
-## 数据与部署
-
-- 工作台数据由 Cloudflare D1 保存，通过登录用户标识隔离。
-- `.openai/hosting.example.json` 提供通用本地 D1 绑定；实际部署时复制为 `.openai/hosting.json` 并填写站点项目。真实配置仅保存在本机，由 Git 忽略。
-- `migrations/` 内的迁移文件不可随意删除；新字段应通过 `db/schema.ts` 修改后生成新的迁移。
-- `node_modules/`、`dist/` 等依赖与构建目录不包含在此源码副本中，可由上述命令重新生成。
-
-## 离线与规则优先
-
-默认使用公开来源与本地规则，模型执行和自动模型任务均关闭。在“数据与恢复”或“AI 模型”的运行方式中可切换到离线模式，或主动开启 AI 辅助。
-
-本机服务运行时，断开互联网仍可管理基础数据、查看知识、练习语言和保存统计周报。公开网页与 RSS 采集不依赖模型；来源不可访问时展示带时间标识的缓存。手机或远程网页与服务器完全断开后，数据库保存仍需等待连接恢复。
-
-详见 [离线使用说明](docs/offline-usage.md) 和 [架构说明](docs/architecture.md)。
+设计参考 [RSSHub](https://github.com/DIYgod/RSSHub)、[Scrapy](https://github.com/scrapy/scrapy)、[AKShare](https://github.com/akfamily/akshare) 和 [Dify](https://github.com/langgenius/dify) 的来源适配与检索组织方式；本仓库自行实现轻量流程。公众号授权订阅可对接 [WeWe RSS](https://github.com/cooderl/wewe-rss) 等独立服务，未将这些平台打包进客户端。

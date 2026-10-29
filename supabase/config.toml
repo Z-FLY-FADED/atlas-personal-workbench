@@ -2,3 +2,6 @@ project_id = "atlas-workspace"
 
 [functions.atlas-assistant]
 verify_jwt = true
+
+[functions.atlas-collect]
+verify_jwt = true

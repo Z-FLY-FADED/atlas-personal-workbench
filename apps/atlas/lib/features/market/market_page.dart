@@ -1,4 +1,8 @@
 import 'dart:convert';
+import '../explore/source_inbox.dart';
+import '../../shared/models/list_filters.dart';
+import '../../shared/widgets/list_filter_button.dart';
+import 'market_filters.dart';
 import 'package:flutter/material.dart';
 import '../../shared/widgets/atlas_widgets.dart';
 import '../../core/asset_catalog.dart';
@@ -20,11 +24,12 @@ class MarketPage extends StatefulWidget {
 class _MarketPageState extends State<MarketPage> {
   final _catalog = AssetCatalog.load();
   String _market = '全部', _query = '';
+  ListFilters _filters = const ListFilters();
   bool _busy = false;
   Map<String, dynamic>? _latest;
   @override
   Widget build(BuildContext context) => DefaultTabController(
-    length: 3,
+    length: 4,
     child: Column(
       children: [
         const Padding(
@@ -36,10 +41,12 @@ class _MarketPageState extends State<MarketPage> {
           ),
         ),
         const TabBar(
+          isScrollable: true,
           tabs: [
             Tab(text: '跨市场目录'),
             Tab(text: '我的自选'),
             Tab(text: '自选分组'),
+            Tab(text: '金十与财经资讯'),
           ],
         ),
         Expanded(
@@ -47,20 +54,12 @@ class _MarketPageState extends State<MarketPage> {
             children: [
               FutureBuilder<Map<String, dynamic>>(
                 future: _catalog,
+                initialData: AssetCatalog.cached,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const Center(child: CircularProgressIndicator());
                   }
                   final all = (snapshot.data!['market'] as List).cast<Map>();
-                  final rows = all
-                      .where(
-                        (e) =>
-                            (_market == '全部' || e['market'] == _market) &&
-                            '${e['name']} ${e['code']} ${e['industry']}'
-                                .toLowerCase()
-                                .contains(_query.toLowerCase()),
-                      )
-                      .toList();
                   final settings = widget.controller
                       .items('workspace_settings')
                       .where((e) => e.text('key') == 'market-cache');
@@ -69,6 +68,26 @@ class _MarketPageState extends State<MarketPage> {
                       : jsonObject(settings.first.payload['value']);
                   final data = _latest ?? cached;
                   final quotes = jsonObject(data['quotes']);
+                  final watched = widget.controller
+                      .items('watchlist_items')
+                      .map((e) => e.text('instrument_id'))
+                      .toSet();
+                  final rows = all
+                      .where(
+                        (e) =>
+                            matchesMarket(
+                              e,
+                              _filters,
+                              watched: watched.contains(
+                                QuoteService.identity(e),
+                              ),
+                              quote: jsonObject(quotes[e['secid']]),
+                            ) &&
+                            '${e['name']} ${e['code']} ${e['industry']} ${e['subIndustry']}'
+                                .toLowerCase()
+                                .contains(_query.trim().toLowerCase()),
+                      )
+                      .toList();
                   return Column(
                     children: [
                       Padding(
@@ -84,8 +103,13 @@ class _MarketPageState extends State<MarketPage> {
                                   ChoiceChip(
                                     label: Text(market),
                                     selected: _market == market,
-                                    onSelected: (_) =>
-                                        setState(() => _market = market),
+                                    onSelected: (_) => setState(() {
+                                      _market = market;
+                                      _filters = _filters.withValue(
+                                        'market',
+                                        market == '全部' ? '' : market,
+                                      );
+                                    }),
                                   ),
                                 OutlinedButton.icon(
                                   onPressed: _busy
@@ -125,6 +149,60 @@ class _MarketPageState extends State<MarketPage> {
                               ],
                             ),
                             const SizedBox(height: 12),
+                            Wrap(
+                              spacing: 12,
+                              runSpacing: 8,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                ListFilterButton(
+                                  title: '股票',
+                                  filters: _filters,
+                                  prices: true,
+                                  fields: [
+                                    FilterField(
+                                      'market',
+                                      '市场',
+                                      filterOptions(
+                                        all.map((e) => e['market']),
+                                      ),
+                                    ),
+                                    FilterField(
+                                      'industry',
+                                      '行业',
+                                      filterOptions(
+                                        all.map((e) => e['industry']),
+                                      ),
+                                    ),
+                                    FilterField(
+                                      'risk',
+                                      '风险',
+                                      filterOptions(all.map((e) => e['risk'])),
+                                    ),
+                                    const FilterField('watched', '自选状态', [
+                                      FilterOption('yes', '已自选'),
+                                      FilterOption('no', '未自选'),
+                                    ]),
+                                    const FilterField('quote', '行情状态', [
+                                      FilterOption('available', '有行情'),
+                                      FilterOption('missing', '暂无行情'),
+                                    ]),
+                                    const FilterField('direction', '涨跌', [
+                                      FilterOption('up', '上涨'),
+                                      FilterOption('down', '下跌'),
+                                      FilterOption('flat', '平盘'),
+                                    ]),
+                                  ],
+                                  onChanged: (value) => setState(() {
+                                    _filters = value;
+                                    _market = value.value('market').isEmpty
+                                        ? '全部'
+                                        : value.value('market');
+                                  }),
+                                ),
+                                Text('显示 ${rows.length} / ${all.length} 个标的'),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
                             TextField(
                               decoration: const InputDecoration(
                                 hintText: '搜索代码、名称、行业',
@@ -146,6 +224,11 @@ class _MarketPageState extends State<MarketPage> {
                         child: ListView(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           children: [
+                            if (rows.isEmpty)
+                              const Padding(
+                                padding: EdgeInsets.all(20),
+                                child: Text('没有匹配的股票，请调整搜索或筛选条件。'),
+                              ),
                             for (final row in rows)
                               Builder(
                                 builder: (context) {
@@ -239,6 +322,7 @@ class _MarketPageState extends State<MarketPage> {
                 kind: 'watchlist_items',
               ),
               CollectionPage(controller: widget.controller, kind: 'watchlists'),
+              SourceInbox(controller: widget.controller, purpose: 'market'),
             ],
           ),
         ),

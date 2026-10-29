@@ -1,7 +1,7 @@
 name: atlas_workspace
 description: WorkSpace Windows and Android personal workspace.
 publish_to: none
-version: 0.5.2+9
+version: 0.6.0+10
 environment:
   sdk: '>=3.10.0 <4.0.0'
 dependencies:

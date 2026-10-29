@@ -1,5 +1,8 @@
 name: WorkSpace native apps
 on:
+  push:
+    branches: [main]
+    paths: ['apps/atlas/**', 'supabase/**', '.github/workflows/native-app.yml']
   pull_request:
     paths: ['apps/atlas/**', 'supabase/**', '.github/workflows/native-app.yml']
   workflow_dispatch:
@@ -11,6 +14,17 @@ on:
 permissions:
   contents: read
 jobs:
+  server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Check Edge Functions
+        run: deno check --config supabase/functions/deno.json supabase/functions/atlas-assistant/index.ts supabase/functions/atlas-collect/index.ts
+      - name: Test parsers and isolated PostgreSQL permissions
+        run: deno test --config supabase/functions/deno.json --allow-env --allow-read --allow-write supabase/tests/exploration_test.ts supabase/tests/exploration_rls_test.ts supabase/tests/industry_test.ts
   check:
     runs-on: ubuntu-latest
     defaults:

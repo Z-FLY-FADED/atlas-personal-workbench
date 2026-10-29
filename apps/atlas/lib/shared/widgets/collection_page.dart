@@ -8,6 +8,11 @@ import '../../features/workspace/catalog.dart';
 import '../../features/workspace/entity.dart';
 import '../../features/workspace/workspace_controller.dart';
 import 'entity_editor.dart';
+import 'list_filter_button.dart';
+import '../models/list_filters.dart';
+import '../../core/asset_catalog.dart';
+import '../../features/career/career_filters.dart';
+import '../../features/market/market_filters.dart';
 
 Future<void> runAction(
   BuildContext context,
@@ -44,6 +49,17 @@ class CollectionPage extends StatefulWidget {
 
 class _CollectionPageState extends State<CollectionPage> {
   final _search = TextEditingController();
+  ListFilters _listFilters = const ListFilters();
+  @override
+  void initState() {
+    super.initState();
+    if (widget.kind == 'watchlist_items') {
+      AssetCatalog.load().then((_) {
+        if (mounted) setState(() {});
+      });
+    }
+  }
+
   String _query = '', _filter = '全部', _taskState = '未完成';
   @override
   void dispose() {
@@ -103,7 +119,101 @@ class _CollectionPageState extends State<CollectionPage> {
           if (e.text(filterKey).isNotEmpty) e.text(filterKey),
       },
     ];
-    final selected = filters.contains(_filter) ? _filter : '全部';
+    final selected = widget.kind == 'applications'
+        ? (_listFilters.value('status').isEmpty
+              ? '全部'
+              : _listFilters.value('status'))
+        : (filters.contains(_filter) ? _filter : '全部');
+    final stockCatalog = (AssetCatalog.cached?['market'] as List? ?? const [])
+        .cast<Map>();
+    final marketSettings = c
+        .items('workspace_settings')
+        .where((e) => e.text('key') == 'market-cache');
+    final stockQuotes = jsonObject(
+      marketSettings.isEmpty
+          ? null
+          : jsonObject(marketSettings.first.payload['value'])['quotes'],
+    );
+    final groups = c.items('watchlists');
+    bool extraMatch(WorkspaceEntity e) {
+      if (widget.kind == 'applications') {
+        return matchesApplication(e, _listFilters);
+      }
+      if (widget.kind != 'watchlist_items') return true;
+      final group = _listFilters.value('watchlist');
+      if (group == '__ungrouped__' && e.text('watchlist_id').isNotEmpty) {
+        return false;
+      }
+      if (group.isNotEmpty && group != '__ungrouped__') {
+        final target = groups.where((g) => g.id == group).firstOrNull;
+        if (target == null ||
+            ![target.id, target.legacyKey].contains(e.text('watchlist_id'))) {
+          return false;
+        }
+      }
+      final row = watchlistInstrument(e, stockCatalog);
+      return matchesMarket(
+        row ?? const {},
+        _listFilters,
+        watched: true,
+        quote: jsonObject(stockQuotes[row?['secid']]),
+      );
+    }
+
+    final advancedFields = widget.kind == 'applications'
+        ? <FilterField>[
+            FilterField(
+              'status',
+              '投递进展',
+              filterOptions(all.map((e) => e.text('status'))),
+            ),
+            FilterField(
+              'company',
+              '公司',
+              filterOptions(all.map((e) => e.text('company'))),
+            ),
+            FilterField(
+              'role',
+              '岗位',
+              filterOptions(all.map((e) => e.text('role'))),
+            ),
+            FilterField(
+              'channel',
+              '渠道',
+              filterOptions(all.map((e) => e.text('channel'))),
+            ),
+          ]
+        : <FilterField>[
+            FilterField(
+              'market',
+              '市场',
+              filterOptions(stockCatalog.map((e) => e['market'])),
+            ),
+            FilterField(
+              'industry',
+              '行业',
+              filterOptions(stockCatalog.map((e) => e['industry'])),
+            ),
+            FilterField(
+              'risk',
+              '风险',
+              filterOptions(stockCatalog.map((e) => e['risk'])),
+            ),
+            FilterField('watchlist', '自选分组', [
+              const FilterOption('__ungrouped__', '未分组'),
+              for (final group in groups)
+                FilterOption(group.id, group.text('name')),
+            ]),
+            const FilterField('quote', '行情状态', [
+              FilterOption('available', '有行情'),
+              FilterOption('missing', '暂无行情'),
+            ]),
+            const FilterField('direction', '涨跌', [
+              FilterOption('up', '上涨'),
+              FilterOption('down', '下跌'),
+              FilterOption('flat', '平盘'),
+            ]),
+          ];
     final items = all
         .where(
           (e) =>
@@ -113,10 +223,13 @@ class _CollectionPageState extends State<CollectionPage> {
               (_taskState == '全部状态' ||
                   !const ['tasks', 'reminders'].contains(widget.kind) ||
                   (_taskState == '已完成' ? e.flag('done') : !e.flag('done'))) &&
-              e.payload.values
-                  .join(' ')
+              extraMatch(e) &&
+              (e.payload.values.join(' ').toLowerCase() +
+                      (widget.kind == 'watchlist_items'
+                          ? ' ${watchlistInstrument(e, stockCatalog)?.values.join(' ') ?? ''}'
+                          : ''))
                   .toLowerCase()
-                  .contains(_query.toLowerCase()),
+                  .contains(_query.trim().toLowerCase()),
         )
         .toList();
     final description = switch (widget.kind) {
@@ -259,6 +372,23 @@ class _CollectionPageState extends State<CollectionPage> {
                       ],
                     ],
                   ),
+                  if (['applications', 'watchlist_items'].contains(widget.kind))
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: ListFilterButton(
+                          title: spec.label,
+                          filters: _listFilters,
+                          fields: advancedFields,
+                          dates: widget.kind == 'applications',
+                          prices: widget.kind == 'watchlist_items',
+                          onChanged: (value) => setState(() {
+                            _listFilters = value;
+                          }),
+                        ),
+                      ),
+                    ),
                   if (!tight &&
                       (filterKey.isNotEmpty ||
                           const [
@@ -280,8 +410,15 @@ class _CollectionPageState extends State<CollectionPage> {
                                       showCheckmark: false,
                                       label: Text(filter),
                                       selected: filter == selected,
-                                      onSelected: (_) =>
-                                          setState(() => _filter = filter),
+                                      onSelected: (_) => setState(() {
+                                        _filter = filter;
+                                        if (widget.kind == 'applications') {
+                                          _listFilters = _listFilters.withValue(
+                                            'status',
+                                            filter == '全部' ? '' : filter,
+                                          );
+                                        }
+                                      }),
                                     ),
                                   ),
                               ],
@@ -332,21 +469,27 @@ class _CollectionPageState extends State<CollectionPage> {
                             child: AtlasEmptyState(
                               icon: spec.icon,
                               title:
-                                  _query.isEmpty &&
+                                  _listFilters.isEmpty &&
+                                      _query.isEmpty &&
                                       selected == '全部' &&
                                       _taskState == '全部状态'
                                   ? '从第一条${spec.label}开始'
                                   : '没有匹配的记录',
-                              description: _query.isEmpty && selected == '全部'
+                              description:
+                                  _listFilters.isEmpty &&
+                                      _query.isEmpty &&
+                                      selected == '全部'
                                   ? '把此刻想做的、想记的，轻轻放在这里。'
                                   : '换一个关键词，或试试其他分类。',
                               action:
-                                  _query.isNotEmpty ||
+                                  !_listFilters.isEmpty ||
+                                      _query.isNotEmpty ||
                                       selected != '全部' ||
                                       _taskState != '全部状态'
                                   ? TextButton(
                                       onPressed: () => setState(() {
                                         _filter = '全部';
+                                        _listFilters = const ListFilters();
                                         _query = '';
                                         _taskState = '全部状态';
                                         _search.clear();

@@ -25,32 +25,38 @@ class AtlasBrand extends StatelessWidget {
         ),
       ),
       const SizedBox(width: 12),
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'WorkSpace',
-            style: TextStyle(
-              fontSize: compact ? 20 : 26,
-              fontWeight: FontWeight.w700,
-              letterSpacing: .2,
-              height: 1.2,
-              color: AtlasColors.text,
-            ),
-          ),
-          if (!compact)
-            const Padding(
-              padding: EdgeInsets.only(top: 5),
-              child: Text(
-                '给成长一点空间',
+      Flexible(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'WorkSpace',
                 style: TextStyle(
-                  color: AtlasColors.muted,
-                  fontSize: 11,
-                  letterSpacing: 1.5,
+                  fontSize: compact ? 20 : 26,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: .2,
+                  height: 1.2,
+                  color: AtlasColors.text,
                 ),
               ),
-            ),
-        ],
+              if (!compact)
+                const Padding(
+                  padding: EdgeInsets.only(top: 5),
+                  child: Text(
+                    '给成长一点空间',
+                    style: TextStyle(
+                      color: AtlasColors.muted,
+                      fontSize: 11,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
     ],
   );

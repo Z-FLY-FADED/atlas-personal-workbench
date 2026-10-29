@@ -1,0 +1,24 @@
+name: 问题反馈 / Bug report
+description: 报告可复现的功能问题
+title: "[Bug] "
+body:
+  - type: input
+    id: version
+    attributes:
+      label: 应用版本与系统 / App version and OS
+      placeholder: WorkSpace 0.6.0+10, Windows 11 / Android ...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤 / Steps to reproduce
+      description: 请勿提交账号密码、API Key 或个人资料。
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: 期望与实际结果 / Expected and actual behavior
+    validations:
+      required: true

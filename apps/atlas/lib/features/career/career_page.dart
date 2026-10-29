@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import '../explore/source_inbox.dart';
+import '../../shared/models/list_filters.dart';
+import '../../shared/widgets/list_filter_button.dart';
+import 'career_filters.dart';
 import '../../shared/widgets/atlas_widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/asset_catalog.dart';
@@ -18,9 +22,10 @@ class CareerPage extends StatefulWidget {
 class _CareerPageState extends State<CareerPage> {
   final _catalog = AssetCatalog.load();
   String _query = '';
+  ListFilters _filters = const ListFilters();
   @override
   Widget build(BuildContext context) => DefaultTabController(
-    length: 4,
+    length: 5,
     child: Column(
       children: [
         const Padding(
@@ -35,6 +40,7 @@ class _CareerPageState extends State<CareerPage> {
           isScrollable: true,
           tabs: [
             Tab(text: '投递记录'),
+            Tab(text: '实时岗位与公告'),
             Tab(text: '岗位与匹配'),
             Tab(text: '主简历'),
             Tab(text: '简历版本'),
@@ -48,8 +54,10 @@ class _CareerPageState extends State<CareerPage> {
                 controller: widget.controller,
                 kind: 'applications',
               ),
+              SourceInbox(controller: widget.controller, purpose: 'career'),
               FutureBuilder<Map<String, dynamic>>(
                 future: _catalog,
+                initialData: AssetCatalog.cached,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const Center(child: CircularProgressIndicator());
@@ -60,6 +68,7 @@ class _CareerPageState extends State<CareerPage> {
                       : resumes.first.text('content');
                   final skills = (snapshot.data!['skills'] as List)
                       .cast<String>();
+                  final allJobs = (snapshot.data!['jobs'] as List).cast<Map>();
                   final jobs =
                       (snapshot.data!['jobs'] as List)
                           .cast<Map>()
@@ -93,6 +102,14 @@ class _CareerPageState extends State<CareerPage> {
                                   .toList(),
                             );
                           })
+                          .where(
+                            (item) => matchesJob(
+                              item.job,
+                              _filters,
+                              matched: item.matched.length,
+                              missing: item.missing.length,
+                            ),
+                          )
                           .toList()
                         ..sort(
                           (a, b) =>
@@ -116,10 +133,78 @@ class _CareerPageState extends State<CareerPage> {
                           onChanged: (v) => setState(() => _query = v),
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                        child: Wrap(
+                          spacing: 12,
+                          runSpacing: 8,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            ListFilterButton(
+                              title: '岗位与匹配',
+                              filters: _filters,
+                              fields: [
+                                FilterField(
+                                  'industry',
+                                  '行业',
+                                  filterOptions(
+                                    allJobs.map((e) => e['industry']),
+                                  ),
+                                ),
+                                FilterField(
+                                  'function',
+                                  '职能',
+                                  filterOptions(
+                                    allJobs.map((e) => e['function']),
+                                  ),
+                                ),
+                                FilterField(
+                                  'location',
+                                  '工作地点',
+                                  filterOptions(
+                                    allJobs.expand(
+                                      (e) =>
+                                          (e['locations'] as List? ?? const []),
+                                    ),
+                                  ),
+                                ),
+                                FilterField(
+                                  'education',
+                                  '学历要求',
+                                  filterOptions(
+                                    allJobs.map((e) => e['education']),
+                                  ),
+                                ),
+                                FilterField(
+                                  'organizationType',
+                                  '单位类型',
+                                  filterOptions(
+                                    allJobs.map((e) => e['organizationType']),
+                                  ),
+                                ),
+                                const FilterField('match', '简历匹配', [
+                                  FilterOption('matched', '有关键词匹配'),
+                                  FilterOption('complete', '全部要求关键词已命中'),
+                                  FilterOption('missing', '有待补充关键词'),
+                                  FilterOption('none', '无关键词匹配'),
+                                ]),
+                              ],
+                              onChanged: (value) =>
+                                  setState(() => _filters = value),
+                            ),
+                            Text('显示 ${jobs.length} / ${allJobs.length} 个岗位'),
+                          ],
+                        ),
+                      ),
                       Expanded(
                         child: ListView(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           children: [
+                            if (jobs.isEmpty)
+                              const Padding(
+                                padding: EdgeInsets.all(20),
+                                child: Text('没有匹配的岗位，请调整搜索或筛选条件。'),
+                              ),
                             for (final item in jobs)
                               Card(
                                 child: Padding(

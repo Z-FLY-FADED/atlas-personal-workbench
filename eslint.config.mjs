@@ -21,6 +21,7 @@ const eslintConfig = defineConfig([
     "worker-configuration.d.ts",
     "apps/atlas/**",
     "supabase/functions/**",
+    "supabase/tests/**",
   ]),
 ]);
 

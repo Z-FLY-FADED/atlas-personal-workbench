@@ -5,7 +5,7 @@ import '../../shared/widgets/collection_page.dart';
 import '../../shared/widgets/entity_editor.dart';
 import '../workspace/catalog.dart';
 import '../workspace/workspace_controller.dart';
-import 'public_source_service.dart';
+import '../explore/server_api.dart';
 
 class ResearchPage extends StatefulWidget {
   const ResearchPage({super.key, required this.controller});
@@ -107,8 +107,11 @@ class _ResearchPageState extends State<ResearchPage> {
                     setState(() => _busy = true);
                     try {
                       final url = _url.text.trim();
-                      final raw = await PublicSourceService.fetch(url);
-                      final text = PublicSourceService.plainText(raw);
+                      final data = await invokeWorkspace('atlas-collect', {
+                        'action': 'read',
+                        'url': url,
+                      });
+                      final text = data['content'].toString();
                       if (text.isEmpty) {
                         throw const FormatException('未提取到可读正文，请手动粘贴。');
                       }
@@ -118,7 +121,7 @@ class _ResearchPageState extends State<ResearchPage> {
                           widget.controller,
                           specFor('knowledge'),
                           initial: {
-                            'title': Uri.parse(url).host,
+                            'title': data['title'],
                             'content': text,
                             'source': url,
                             'source_type': '网址',
