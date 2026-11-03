@@ -1,8 +1,10 @@
 # WorkSpace · 个人工作台
 
+**简体中文 · [English](README.en.md)**
+
 把任务、知识、学习与行业信息，放进同一个属于自己的工作空间。
 
-A personal workspace for Windows and Android: tasks, private knowledge, language learning, job tracking, market research and optional AI assistance. Built with Flutter and Supabase. [English](README.en.md)
+A personal workspace for Windows and Android: tasks, private knowledge, language learning, job tracking, market research and optional AI assistance. Built with Flutter and Supabase.
 
 [![Release](https://img.shields.io/github/v/release/Z-FLY-FADED/atlas-personal-workbench?include_prereleases&label=preview)](https://github.com/Z-FLY-FADED/atlas-personal-workbench/releases)
 [![Checks](https://github.com/Z-FLY-FADED/atlas-personal-workbench/actions/workflows/native-app.yml/badge.svg?branch=main)](https://github.com/Z-FLY-FADED/atlas-personal-workbench/actions/workflows/native-app.yml)
